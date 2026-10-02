@@ -43,3 +43,20 @@ const sectionObserver = new IntersectionObserver((entries) => {
 }, { rootMargin: '-30% 0px -60% 0px', threshold: 0 });
 
 sections.forEach((section) => sectionObserver.observe(section));
+const lightbox = document.getElementById('image-lightbox');
+const lightboxImage = document.getElementById('lightbox-image');
+const closeLightbox = lightbox?.querySelector('.lightbox-close');
+
+document.querySelectorAll('.project-shot').forEach((shot) => {
+  shot.addEventListener('click', () => {
+    const image = shot.querySelector('img');
+    lightboxImage.src = shot.dataset.lightbox;
+    lightboxImage.alt = image.alt;
+    lightbox.showModal();
+  });
+});
+
+closeLightbox?.addEventListener('click', () => lightbox.close());
+lightbox?.addEventListener('click', (event) => {
+  if (event.target === lightbox) lightbox.close();
+});
