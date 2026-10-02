@@ -60,3 +60,8 @@ closeLightbox?.addEventListener('click', () => lightbox.close());
 lightbox?.addEventListener('click', (event) => {
   if (event.target === lightbox) lightbox.close();
 });
+
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+if (reduceMotion.matches) {
+  document.querySelectorAll('.reveal').forEach((element) => element.classList.add('is-visible'));
+}
