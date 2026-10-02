@@ -78,3 +78,7 @@
 .cv-on-dark{border-color:#ffffff55;color:#fff}
 .cv-on-dark:hover{background:#fff;color:#071425}
 @media(max-width:760px){.nav-cv{display:none}}
+
+/* Keep recruiter actions readable on the dark role section */
+.role-fit .role-linkedin{background:#0a66c2!important;border-color:#0a66c2!important;color:#fff!important}
+.role-fit .role-linkedin:hover{background:#084f96!important;border-color:#084f96!important;color:#fff!important}
