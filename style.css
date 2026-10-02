@@ -69,3 +69,12 @@
 .role-linkedin{border-color:#ffffff55;color:#fff}
 .role-linkedin:hover{background:#fff;color:#071425}
 @media(max-width:760px){.impact-strip,.role-fit{padding:72px 0}.impact-grid,.role-fit-grid{grid-template-columns:1fr;gap:13px}.role-fit-grid{gap:25px}.role-fit h2{font-size:2.45rem}.role-actions .button{width:100%;justify-content:center}}
+
+/* Public CV download */
+.nav-cv{font-size:.78rem;font-weight:800;color:var(--ink);text-decoration:none;padding:9px 11px;border:1px solid var(--line);border-radius:9px}
+.nav-cv:hover{border-color:var(--blue);color:var(--blue)}
+.cv-button{background:transparent;border:1px solid var(--line);color:var(--ink)}
+.cv-button:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-soft)}
+.cv-on-dark{border-color:#ffffff55;color:#fff}
+.cv-on-dark:hover{background:#fff;color:#071425}
+@media(max-width:760px){.nav-cv{display:none}}
