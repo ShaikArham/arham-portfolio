@@ -70,3 +70,10 @@ Deployment target: Vercel production, from this repository. GitHub Pages remains
 Production: https://arham-portfolio-topaz.vercel.app/ . Project: arham-portfolio, owned by the user’s Vercel workspace. The release was uploaded through the authorized Vercel connection from reviewed source. Vercel runs the checked static build. Automatic GitHub deployments are not connected: Vercel requires a separate GitHub Login Connection before Git linking can be enabled.
 
 Verified: public HTTP 200, local JavaScript/portrait/paper delivery, custom HTTP 404, response security headers, rendered project collection, filters and case-study dialogs. Vercel’s initial runtime error scan returned no errors. No external log drains are configured. This does not substitute for a screen-reader audit or physical-device testing.
+
+
+## Interactive Dublin exhibit
+
+The foreground city uses original 3D coordinates projected into a native canvas. Drag/keyboard orbit, three camera presets, zoom and reset work without third-party runtime libraries. It is a stylised composition rather than a geographical model. Rendering pauses when off-screen or when the tab is hidden. Reduced motion and the Motion control use single-frame updates. The project shelf uses original CSS 3D covers based on the user's own project images, with native buttons, arrows and keyboard selection.
+
+Campus photo: The John and Aileen O`Reilly Library, by SSCOhA, 26 November 2016. Source https://commons.wikimedia.org/wiki/File:The_John_and_Aileen_O%60Reilly_Library.jpg . CC BY-SA 4.0: https://creativecommons.org/licenses/by-sa/4.0/ . The resized WebP and displayed crop remain under that licence; attribution appears beside the image.
