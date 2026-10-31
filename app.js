@@ -1,65 +1,44 @@
 'use strict';
 (()=>{
-const $=id=>document.getElementById(id),projects=window.PORTFOLIO_PROJECTS;
-const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const profiles={recruiter:{name:'Recruiter',glyph:'R',order:['journey','about','dcu','projects','skills','recognition'],projectOrder:['ops','energy','customer','hr','relay']},data:{name:'Data & BI',glyph:'▥',order:['about','journey','dcu','projects','skills','recognition'],projectOrder:['ops','energy','customer','hr','relay']},support:{name:'Support',glyph:'⌘',order:['journey','projects','dcu','skills','about','recognition'],projectOrder:['ops','relay','customer','hr','energy']}};
-let activeProfile='data',introIndex=0,openingTimer=null;
-function stored(key){try{return sessionStorage.getItem(key);}catch{return null;}}
-function save(key,value){try{sessionStorage.setItem(key,value);}catch{}}
-function notify(text){$('toast').textContent=text;$('toast').classList.add('show');clearTimeout(notify.timer);notify.timer=setTimeout(()=>$('toast').classList.remove('show'),3000);}
-function cards(){const order=profiles[activeProfile].projectOrder;$('project-rail').innerHTML=order.map(id=>{const p=projects.find(x=>x.id===id);return `<article class="project-card"><button type="button" class="project-poster" data-open="${p.id}" style="--poster:${p.color}" aria-label="Explore ${esc(p.title)}"><img src="${p.image}" alt="" loading="lazy"><span class="poster-top"><b>A</b> ORIGINAL</span><span class="poster-number">${p.number}</span><h3>${esc(p.title)}</h3><p>${esc(p.subtitle)}</p><span class="poster-action">EXPLORE THIS PROJECT <b>▶</b></span></button><div class="project-meta"><span>${esc(p.category)}</span><span>View details +</span></div></article>`;}).join('');}
-function openProject(id){const p=projects.find(p=>p.id===id);if(!p)return;
-const links=[p.demo?`<a class="button primary" href="${p.demo}" target="_blank" rel="noreferrer">▶ Open live demo</a>`:'',p.code?`<a class="button glass" href="${p.code}" target="_blank" rel="noreferrer">Code on GitHub ↗</a>`:'',p.paper?`<a class="button primary" href="${p.paper}" target="_blank" rel="noreferrer">Read practicum paper ↗</a>`:''].join('');
-$('project-detail').innerHTML=`<div class="detail-banner" style="--poster:${p.color}"><img src="${p.image}" alt=""><p>${esc(p.type)}</p><h2 id="project-title">${esc(p.title)}</h2></div><div class="detail-body" style="--poster:${p.color}"><div class="detail-tags">${p.tags.map(t=>`<span>${esc(t)}</span>`).join('')}</div><p>${esc(p.description)}</p><h3>The approach</h3><p>${esc(p.approach)}</p><h3>The evidence</h3><ul class="detail-evidence">${p.evidence.map(e=>`<li>${esc(e)}</li>`).join('')}</ul><div class="detail-links">${links}</div><p class="detail-limit">${esc(p.limit)}</p></div>`;
-$('project-dialog').showModal();}
-function season(id){const episodes=window.PORTFOLIO_SEASONS[id];if(!episodes)return;document.querySelectorAll('[data-season]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.season===id)));$('season-content').innerHTML=episodes.map((e,i)=>`<article class="episode"><span class="episode-num">${String(i+1).padStart(2,'0')}</span><div><small>${esc(e.date)}</small><h3>${esc(e.title)}</h3><p class="org">${esc(e.org)}</p><p class="body">${esc(e.body)}</p></div></article>`).join('');}
-function selectProfile(id,announce=true){if(!profiles[id])return;activeProfile=id;save('arham-series-profile',id);$('viewer-name').textContent=profiles[id].name;$('viewer-glyph').textContent=profiles[id].glyph;const host=$('story-sections');for(const section of profiles[id].order)host.append($(section));cards();if($('profiles-dialog').open)$('profiles-dialog').close();if(announce)notify(`Exploring as ${profiles[id].name}. All projects and details remain available.`);}
-const intro=[{n:'01',title:'Enterprise systems. Practical problems.',text:'My foundation is 2.5+ years at Hitachi Digital Services, working across Oracle-based enterprise systems, SQL, reporting, data investigation and application support.'},{n:'02',title:'A deeper understanding of the data.',text:'I completed an MSc Computing (Data Analytics) at Dublin City University. My co-authored practicum explored XGBoost forecasting, SHAP explanations and LLM-assisted residential energy scheduling.'},{n:'03',title:'See the work for yourself.',text:'Explore OpsResolve AI, the energy practicum and three new fictional-data demonstrations: Customer Lens, Workforce Atlas and Report Relay. I’m looking for data, BI, reporting and application-support opportunities in Dublin and Ireland.'}];
-function introSlide(){const s=intro[introIndex];$('intro-content').innerHTML=`<div class="intro-slide"><p class="chapter">${s.n}</p><h2 id="intro-title">${s.title}</h2><p>${s.text}</p></div>`;$('intro-progress').textContent=`Chapter ${introIndex+1} of ${intro.length}`;$('intro-prev').disabled=introIndex===0;$('intro-next').disabled=introIndex===intro.length-1;}
-function finishOpening(){clearTimeout(openingTimer);$('opening').hidden=true;$('opening').setAttribute('aria-hidden','true');if(!$('profiles-dialog').open)$('profiles-dialog').showModal();}
-function opening(){document.querySelectorAll('dialog[open]').forEach(d=>d.close());$('opening').hidden=false;$('opening').setAttribute('aria-hidden','false');$('skip-opening').focus();openingTimer=setTimeout(finishOpening,window.matchMedia('(prefers-reduced-motion: reduce)').matches?0:1100);}
-document.addEventListener('click',e=>{const open=e.target.closest('[data-open]');if(open)openProject(open.dataset.open);const profile=e.target.closest('[data-profile]');if(profile)selectProfile(profile.dataset.profile);const tab=e.target.closest('[data-season]');if(tab)season(tab.dataset.season);});
-document.querySelectorAll('dialog').forEach(d=>{d.querySelector('.dialog-close').addEventListener('click',()=>d.close());d.addEventListener('click',e=>{if(e.target===d){const r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)d.close();}});});
-$('viewer-button').addEventListener('click',()=>$('profiles-dialog').showModal());$('play-intro').addEventListener('click',()=>{introIndex=0;introSlide();$('intro-dialog').showModal();});$('intro-prev').addEventListener('click',()=>{if(introIndex>0){introIndex--;introSlide();}});$('intro-next').addEventListener('click',()=>{if(introIndex<intro.length-1){introIndex++;introSlide();}});$('intro-dialog').addEventListener('keydown',e=>{if(e.key==='ArrowRight'&&introIndex<2){introIndex++;introSlide();}if(e.key==='ArrowLeft'&&introIndex>0){introIndex--;introSlide();}});
-$('award-open').addEventListener('click',()=>$('image-dialog').showModal());$('award-details').addEventListener('click',()=>$('image-dialog').showModal());$('skip-opening').addEventListener('click',finishOpening);$('replay').addEventListener('click',opening);document.addEventListener('keydown',e=>{if(!$('opening').hidden&&(e.key==='Escape'||e.key==='Enter'))finishOpening();});
-for(const [id,dir] of [['projects-prev',-1],['projects-next',1]])$(id).addEventListener('click',()=>$('project-rail').scrollBy({left:dir*$('project-rail').clientWidth*.7,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'}));
-const theme=stored('arham-series-theme');if(theme==='light')document.body.classList.add('light');function themeIcon(){const light=document.body.classList.contains('light');$('theme-toggle').textContent=light?'☾':'☀';$('theme-toggle').setAttribute('aria-label',light?'Switch to dark theme':'Switch to light theme');}themeIcon();$('theme-toggle').addEventListener('click',()=>{document.body.classList.toggle('light');save('arham-series-theme',document.body.classList.contains('light')?'light':'dark');themeIcon();});
-season('enterprise');const saved=stored('arham-series-profile');selectProfile(profiles[saved]?saved:'data',false);
-})();
-
-// Dublin city layers: decorative, frame-limited and disabled for reduced motion.
-(()=>{
-const root=document.documentElement,body=document.body;
-const preference=window.matchMedia('(prefers-reduced-motion: reduce)');
-let userOff=false;try{userOff=sessionStorage.getItem('arham-city-motion')==='off';}catch{}
-let ticking=false,enabled=true,lastScene='',lastStop='';
-const toggle=document.getElementById('motion-toggle');
-const names={skyline:'Dublin / The Spire',bridges:'The Liffey / Connections',campus:'DCU / The research chapter',docklands:'Docklands / Ideas at work',bay:'Dublin / The next chapter'};
-function frame(){ticking=false;
- const max=Math.max(1,document.documentElement.scrollHeight-window.innerHeight);
- const y=window.scrollY;root.style.setProperty('--city-progress',String(Math.min(1,y/max)));
- root.style.setProperty('--city-drift',enabled?`${Math.min(100,y*.025)}px`:'0px');
- root.style.setProperty('--near-drift',enabled?`${Math.min(150,y*.05)}px`:'0px');
- const chapters=[...document.querySelectorAll('[data-city-scene]')];
- let current=chapters[0];for(const el of chapters){if(el.getBoundingClientRect().top<=window.innerHeight*.5)current=el;}
- const scene=current?.dataset.cityScene||'skyline';if(scene!==lastScene){body.dataset.cityScene=scene;const label=document.getElementById('city-location');if(label)label.textContent=names[scene];lastScene=scene;}
- const stopMap={top:'top',about:'journey',journey:'journey',dcu:'dcu',projects:'projects',skills:'projects',recognition:'projects',contact:'contact'};
- const stop=stopMap[current?.id]||'top';if(stop!==lastStop){document.querySelectorAll('[data-stop]').forEach(a=>{if(a.dataset.stop===stop)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current');});lastStop=stop;}
- const journey=document.getElementById('journey'),r=journey.getBoundingClientRect();root.style.setProperty('--journey-progress',String(Math.max(0,Math.min(1,(window.innerHeight-r.top)/(r.height+window.innerHeight)))));
-}
-function queue(){if(!ticking){ticking=true;requestAnimationFrame(frame);}}
-function updateMotion(){enabled=!preference.matches&&!userOff;body.classList.toggle('motion-off',!enabled);toggle.textContent=preference.matches?'Motion reduced':enabled?'Motion on':'Motion off';toggle.setAttribute('aria-pressed',String(enabled));toggle.setAttribute('aria-label',enabled?'Turn off city motion':'Turn on city motion');toggle.disabled=preference.matches;queue();}
-toggle.addEventListener('click',()=>{userOff=!userOff;try{sessionStorage.setItem('arham-city-motion',userOff?'off':'on');}catch{}updateMotion();});
-preference.addEventListener('change',updateMotion);window.addEventListener('scroll',queue,{passive:true});window.addEventListener('resize',queue,{passive:true});
-new MutationObserver(queue).observe(document.getElementById('story-sections'),{childList:true});
-updateMotion();
-})();
-
-// Progressive reveals keep content visible when scripting or motion is unavailable.
-(()=>{
- const sections=[...document.querySelectorAll('#story-sections > section')];
+ const $=id=>document.getElementById(id),projects=window.PORTFOLIO_PROJECTS||[];
+ const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const group=p=>p.id==='ops'?'support':p.id==='energy'?'research':'analytics';
+ const learning={ops:'Incident investigation, operational reporting and evidence-based support workflows.',energy:'Forecast evaluation, explanation of model outputs and assessment of scheduling constraints.',customer:'RFM segmentation, transaction validation and the limits of descriptive customer analysis.',hr:'Headcount reconciliation, turnover denominators and aggregate workforce reporting.',relay:'Data quality gates, SQL control totals and repeatable reporting runs.'};
  const reduce=matchMedia('(prefers-reduced-motion: reduce)');
- if(reduce.matches)return;
- const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('studio-visible');observer.unobserve(entry.target);}}),{threshold:.08});
- sections.forEach(section=>{section.classList.add('studio-reveal');observer.observe(section);});
+ let filter='all',introIndex=0;
+ function read(k){try{return localStorage.getItem(k)||sessionStorage.getItem(k);}catch{return null;}}
+ function save(k,v){try{localStorage.setItem(k,v);}catch{}}
+ function reduced(){return reduce.matches||document.body.classList.contains('motion-off');}
+ function cards(){
+  const shown=projects.filter(p=>filter==='all'||group(p)===filter);
+  $('project-count').textContent=`${shown.length} project${shown.length===1?'':'s'}`;
+  $('project-rail').innerHTML=shown.map(p=>`<article class="collection-card ${p.id==='ops'&&filter==='all'?'collection-featured':''}" style="--poster:${p.color}"><div class="collection-art"><img src="${p.image}" alt="${esc(p.title)} ${p.id==='energy'?'research architecture diagram':'demo interface'}" loading="lazy" decoding="async"><span class="collection-index">${p.number} / ${esc(p.category)}</span></div><div class="collection-copy"><p class="collection-type">${p.id==='energy'?'CO-AUTHORED MSc RESEARCH':'INDEPENDENT DEMO · FICTIONAL DATA'}</p><h3>${esc(p.title)}</h3><p>${esc(p.description)}</p><p class="collection-proof">${esc(p.evidence[0])}</p><div class="collection-links"><button type="button" class="button primary" data-open="${p.id}">Read case study <span class="sr-only">for ${esc(p.title)}</span> ↗</button>${p.demo?`<a href="${p.demo}" target="_blank" rel="noreferrer">Live demo ↗<span class="sr-only">: ${esc(p.title)}, opens in a new tab</span></a>`:`<a href="${p.paper}" target="_blank" rel="noreferrer">Read paper ↗<span class="sr-only">, opens in a new tab</span></a>`}${p.code?`<a href="${p.code}" target="_blank" rel="noreferrer">Code ↗<span class="sr-only">: ${esc(p.title)}, opens in a new tab</span></a>`:''}</div></div></article>`).join('');
+  document.querySelectorAll('[data-filter]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.filter===filter)));
+ }
+ function openProject(id){
+  const p=projects.find(p=>p.id===id);if(!p)return;
+  const links=[p.demo?`<a class="button primary" href="${p.demo}" target="_blank" rel="noreferrer">Open live demo ↗</a>`:'',p.code?`<a class="button glass" href="${p.code}" target="_blank" rel="noreferrer">Inspect the code ↗</a>`:'',p.paper?`<a class="button primary" href="${p.paper}" target="_blank" rel="noreferrer">Read the research paper ↗</a>`:''].join('');
+  $('project-detail').innerHTML=`<div class="detail-banner" style="--poster:${p.color}"><img src="${p.image}" alt=""><p>${esc(p.type)}</p><h2 id="project-title">${esc(p.title)}</h2></div><div class="detail-body"><div class="detail-tags">${p.tags.map(t=>`<span>${esc(t)}</span>`).join('')}</div><h3>The project</h3><p>${esc(p.description)}</p><h3>The approach</h3><p>${esc(p.approach)}</p><h3>The evidence</h3><ul class="detail-evidence">${p.evidence.map(e=>`<li>${esc(e)}</li>`).join('')}</ul><h3>What this demonstrates</h3><p>${esc(learning[p.id])}</p><div class="detail-links">${links}</div><p class="detail-limit"><strong>Scope & limitations:</strong> ${esc(p.limit)}</p></div>`;
+  $('project-dialog').showModal();
+ }
+ function season(id){const episodes=window.PORTFOLIO_SEASONS[id];if(!episodes)return;document.querySelectorAll('[data-season]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.season===id)));$('season-content').innerHTML=episodes.map((e,i)=>`<article class="episode"><span class="episode-num">${String(i+1).padStart(2,'0')}</span><div><small>${esc(e.date)}</small><h3>${esc(e.title)}</h3><p class="org">${esc(e.org)}</p><p class="body">${esc(e.body)}</p></div></article>`).join('');}
+ const intro=[{title:'Enterprise systems. Practical problems.',text:'My foundation is 2.5+ years at Hitachi Digital Services, working across Oracle-based enterprise systems, SQL, reporting, data investigation and application support.'},{title:'A deeper understanding of the data.',text:'My MSc Computing (Data Analytics) at DCU extended that foundation into machine learning and explainable AI. The energy practicum is co-authored research.'},{title:'See the work for yourself.',text:'Explore the five project case studies, their evidence and limitations. I’m seeking data, BI, reporting and application-support opportunities in Dublin and Ireland.'}];
+ function introSlide(){const s=intro[introIndex];$('intro-content').innerHTML=`<div class="intro-slide"><p class="chapter">${String(introIndex+1).padStart(2,'0')}</p><h2 id="intro-title">${s.title}</h2><p>${s.text}</p></div>`;$('intro-progress').textContent=`Chapter ${introIndex+1} of 3`;$('intro-prev').disabled=introIndex===0;$('intro-next').disabled=introIndex===2;}
+ document.addEventListener('click',e=>{const b=e.target.closest('[data-open],[data-filter],[data-season]');if(!b)return;if(b.dataset.open)openProject(b.dataset.open);if(b.dataset.filter){filter=b.dataset.filter;cards();}if(b.dataset.season)season(b.dataset.season);});
+ document.querySelectorAll('dialog').forEach(d=>{d.querySelector('.dialog-close')?.addEventListener('click',()=>d.close());d.addEventListener('click',e=>{if(e.target===d){const r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)d.close();}});});
+ $('play-intro').addEventListener('click',()=>{introIndex=0;introSlide();$('intro-dialog').showModal();});
+ $('intro-prev').addEventListener('click',()=>{if(introIndex>0){introIndex--;introSlide();}});$('intro-next').addEventListener('click',()=>{if(introIndex<2){introIndex++;introSlide();}});
+ $('intro-dialog').addEventListener('keydown',e=>{if(e.key==='ArrowRight'&&introIndex<2){introIndex++;introSlide();}if(e.key==='ArrowLeft'&&introIndex>0){introIndex--;introSlide();}});
+ $('award-open').addEventListener('click',()=>$('image-dialog').showModal());$('award-details').addEventListener('click',()=>$('image-dialog').showModal());
+ function themeIcon(){const light=document.body.classList.contains('light');$('theme-toggle').textContent=light?'☾':'☀';$('theme-toggle').setAttribute('aria-label',light?'Switch to dark theme':'Switch to light theme');document.querySelector('meta[name="theme-color"]').content=light?'#f4f1e9':'#080e0d';}
+ document.body.classList.toggle('light',read('arham-series-theme')==='light');themeIcon();$('theme-toggle').addEventListener('click',()=>{document.body.classList.toggle('light');save('arham-series-theme',document.body.classList.contains('light')?'light':'dark');themeIcon();});
+ let userOff=read('arham-city-motion')==='off';function motion(){const off=reduce.matches||userOff;document.body.classList.toggle('motion-off',off);$('motion-toggle').textContent=reduce.matches?'Motion reduced':off?'Motion off':'Motion on';$('motion-toggle').setAttribute('aria-pressed',String(!off));$('motion-toggle').setAttribute('aria-label',off?'Enable optional animation':'Disable optional animation');$('motion-toggle').disabled=reduce.matches;document.documentElement.style.scrollBehavior=off?'auto':'smooth';}
+ $('motion-toggle').addEventListener('click',()=>{userOff=!userOff;save('arham-city-motion',userOff?'off':'on');motion();});reduce.addEventListener('change',motion);motion();
+ const menu=$('menu-toggle'),nav=$('main-nav');function closeMenu(){menu.setAttribute('aria-expanded','false');nav.classList.remove('menu-open');}
+ menu.addEventListener('click',()=>{const open=menu.getAttribute('aria-expanded')!=='true';menu.setAttribute('aria-expanded',String(open));nav.classList.toggle('menu-open',open);});nav.addEventListener('click',e=>{if(e.target.closest('a'))closeMenu();});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menu.getAttribute('aria-expanded')==='true'){closeMenu();menu.focus();}});document.addEventListener('click',e=>{if(!e.target.closest('.nav'))closeMenu();});matchMedia('(min-width: 901px)').addEventListener('change',closeMenu);
+ let pending=false;function frame(){pending=false;const max=Math.max(1,document.documentElement.scrollHeight-innerHeight);document.documentElement.style.setProperty('--reading-progress',String(scrollY/max));const sections=[...document.querySelectorAll('main section[id]')];let active='top';sections.forEach(s=>{if(s.getBoundingClientRect().top<=150)active=s.id;});nav.querySelectorAll('a').forEach(a=>{if(a.hash==='#'+active)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current');});}
+ function queue(){if(!pending){pending=true;requestAnimationFrame(frame);}}addEventListener('scroll',queue,{passive:true});addEventListener('resize',queue,{passive:true});
+ // Content is visible before observation and never waits on an animation to be usable.
+ if('IntersectionObserver' in window){const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){if(!reduced())e.target.classList.add('collection-enter');io.unobserve(e.target);}}),{threshold:.05});document.querySelectorAll('#story-sections>section').forEach(s=>io.observe(s));}
+ cards();season('enterprise');frame();
 })();

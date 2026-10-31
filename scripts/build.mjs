@@ -1,0 +1,9 @@
+import './check.mjs';
+import {cpSync,mkdirSync,rmSync} from 'node:fs';
+import {join,dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+const root=join(dirname(fileURLToPath(import.meta.url)),'..'),out=join(root,'dist');
+rmSync(out,{recursive:true,force:true});mkdirSync(out,{recursive:true});
+for(const f of ['index.html','style.css','app.js','portfolio-data.js','favicon.ico','404.html'])cpSync(join(root,f),join(out,f));
+cpSync(join(root,'assets'),join(out,'assets'),{recursive:true,filter:src=>!src.includes('/assets/video')});
+console.log('Built static production files in dist/; source scripts and unused footage are excluded.');

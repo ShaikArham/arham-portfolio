@@ -52,3 +52,14 @@ Artwork: `assets/dublin/`. Interface additions and overrides appear in the Dubli
 Original visual redesign informed by https://netflix-portfolio-kohl-beta.vercel.app/ : oversized typography, a framed portrait, episode-style sections and project posters. Its code, claims, images and personal content are not copied. Arham’s version uses emerald and copper, his actual portrait, local Dublin-inspired landmark artwork, DCU research and the existing five evidenced projects. No affiliation with Netflix is implied.
 
 No YouTube players, links or videos are included. The footage edition has been removed from the published tree. The hero is immediately usable without a mandatory opening animation or viewer selection. Profiles, theme switching, motion settings, project detail dialogs, career tabs, local paper/CV and contact links remain available.
+
+
+## Production collection edition
+
+Design review used MotionSites’ public portfolio gallery and the freely available Shelf Hero prompt as inspiration for a browsable collection, distinctive project covers and restrained depth effects. No paid source code or third-party artwork was copied. Native pointer, page scrolling and keyboard controls are retained.
+
+The five project records retain their evidence and limits. OpsResolve appears first and Explainable Energy second in All work. Category filters expose application support, research and analytics/reporting. Direct demo, paper and source links sit beside each case study. The page uses one fixed reading order, with no persona gate, hidden project rail or floating bottom navigation.
+
+Run `node scripts/build.mjs` for the static production build. It runs the checks and copies only the web files and retained assets into `dist/`. Unused footage, source scripts, uploads and local secrets are excluded. `vercel.json` configures the build, static output, content security policy and response headers.
+
+Deployment target: Vercel production, from this repository. GitHub Pages remains a fallback. Browser verification and deployment status must be checked after release; a passing build alone does not prove the site is live or certify accessibility.

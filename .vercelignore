@@ -1,0 +1,7 @@
+upload/
+assets/video/
+node_modules/
+.env*
+.git/
+*.zip
+dist/
