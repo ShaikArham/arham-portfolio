@@ -63,3 +63,10 @@ The five project records retain their evidence and limits. OpsResolve appears fi
 Run `node scripts/build.mjs` for the static production build. It runs the checks and copies only the web files and retained assets into `dist/`. Unused footage, source scripts, uploads and local secrets are excluded. `vercel.json` configures the build, static output, content security policy and response headers.
 
 Deployment target: Vercel production, from this repository. GitHub Pages remains a fallback. Browser verification and deployment status must be checked after release; a passing build alone does not prove the site is live or certify accessibility.
+
+
+## Live Vercel release
+
+Production: https://arham-portfolio-topaz.vercel.app/ . Project: arham-portfolio, owned by the user’s Vercel workspace. The release was uploaded through the authorized Vercel connection from reviewed source. Vercel runs the checked static build. Automatic GitHub deployments are not connected: Vercel requires a separate GitHub Login Connection before Git linking can be enabled.
+
+Verified: public HTTP 200, local JavaScript/portrait/paper delivery, custom HTTP 404, response security headers, rendered project collection, filters and case-study dialogs. Vercel’s initial runtime error scan returned no errors. No external log drains are configured. This does not substitute for a screen-reader audit or physical-device testing.
