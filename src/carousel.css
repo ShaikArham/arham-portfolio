@@ -9,3 +9,5 @@
 @media(max-width:900px) and (min-width:641px){.toonhub{height:600px}.toon-ghost{font-size:170px}}
 @media(max-width:640px){.toonhub{height:580px;border-radius:18px}.toon-brand{left:18px;right:18px;top:20px;font-size:9px}.toon-brand span{font-size:8px}.toon-ghost{font-size:110px;top:19%}.toon-bottom{padding:18px;min-height:190px}.toon-characters{bottom:180px!important}.toon-caption h2{font-size:18px}.toon-controls a{font-size:20px}.toon-caption p{font-size:11px}}
 @media(prefers-reduced-motion:reduce){.toonhub,.toonhub *{transition:none!important;animation:none!important}}
+
+.avatar-note{position:absolute;right:24px;top:49px;z-index:60;font-size:9px;opacity:.75}.toon-character img{filter:drop-shadow(0 12px 14px #10241e22)}

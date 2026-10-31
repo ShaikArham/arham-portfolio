@@ -88,3 +88,14 @@ Primary address: https://arham-bi.vercel.app/ . The previous Vercel address rema
 ## Character carousel edition
 The hero side panel is React + TypeScript, built with Vite and Tailwind utilities. Lucide supplies the arrow icons. Run `npm ci` then `npm run build`. The checked-in `carousel-build` supports the existing static publish pipeline. Four optimized WebP assets preserve the supplied Figma reference characters. Original image URLs remain in `src/main.tsx`; imagery is decorative, not a representation of employment or research. No license ownership is claimed for the supplied artwork.
 Manual checks: next/previous wrapping, rapid-click lock, keyboard arrows, reduced motion, local image delivery and DCU image preservation.
+
+## Personal edition
+- Replaced the third-party reference figurines with one original illustrated avatar based on Arham's supplied face photograph. All four story positions use this consistent personal character.
+- Added the existing real suit photograph behind the hero copy, with theme-aware contrast overlays.
+- Added labelled, required contact fields with native email validation, limits, a topic selector, email draft preparation and copy fallback. The static site does not store form content or claim delivery. No mail service credentials are configured.
+- Preserved the supplied DCU campus photograph, factual project descriptions and short production address.
+- Mobile stacking, keyboard controls, reduced motion, local optimized artwork and accessible form status remain supported.
+
+Avatar generated with the built-in image-generation tool. Prompt: Create a polished stylized 3D figurine of this exact adult man for his professional data analytics portfolio. Preserve his recognizable face, warm brown skin, thick wavy black hair, dark eyes and neatly trimmed beard and moustache. Full body standing, front three-quarter view, friendly confident subtle smile. Tastefully oversized head in premium collectible character style, adult proportions, navy business suit, white open-collar shirt, clean dark shoes, holding a closed slim laptop at his side. No glasses, no hat, no words, no logos, no background, true transparent alpha. Entire figure fully inside canvas with generous padding, studio lighting. This is an illustrated avatar based on the supplied real person, not photorealistic.
+
+Source and optimized asset: `src/main.tsx`, `assets/arham-avatar.webp`. Only the derived avatar is published. The private selfie reference is not included in the repository.

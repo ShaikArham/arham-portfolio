@@ -45,5 +45,10 @@
  if('IntersectionObserver' in window){const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){if(!reduced())e.target.classList.add('collection-enter');io.unobserve(e.target);}}),{threshold:.05});document.querySelectorAll('#story-sections>section').forEach(s=>io.observe(s));}
  function moveShelf(direction){const length=projects.filter(p=>filter==='all'||group(p)===filter).length;shelfIndex=(shelfIndex+direction+length)%length;cards();}
  $('shelf-prev').addEventListener('click',()=>moveShelf(-1));$('shelf-next').addEventListener('click',()=>moveShelf(1));$('project-shelf').addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();moveShelf(e.key==='ArrowRight'?1:-1);$('project-shelf').querySelector('.volume-active')?.focus();}});
+
+ const contactForm=$('contact-form');
+ function contactDraft(){const data=new FormData(contactForm);return {subject:`Portfolio enquiry: ${data.get('topic')}`,body:`Hello Arham,\n\n${String(data.get('message')).trim()}\n\nFrom: ${String(data.get('name')).trim()}\nEmail: ${String(data.get('email')).trim()}`};}
+ contactForm.addEventListener('submit',e=>{e.preventDefault();if(!contactForm.reportValidity())return;const draft=contactDraft();const link=document.createElement('a');link.href=`mailto:sarhamsaquib@gmail.com?subject=${encodeURIComponent(draft.subject)}&body=${encodeURIComponent(draft.body)}`;link.click();$('contact-status').textContent='Your email app should open with a draft. Nothing has been sent yet. If it does not open, copy your message and email sarhamsaquib@gmail.com.';});
+ $('copy-contact').addEventListener('click',async()=>{if(!contactForm.reportValidity())return;const draft=contactDraft();try{await navigator.clipboard.writeText(`To: sarhamsaquib@gmail.com\nSubject: ${draft.subject}\n\n${draft.body}`);$('contact-status').textContent='Message copied. Paste it into an email to sarhamsaquib@gmail.com.';}catch{$('contact-status').textContent='Copy is unavailable in this browser. Select your message and copy it manually, then email sarhamsaquib@gmail.com.';}});
  cards();season('enterprise');frame();
 })();

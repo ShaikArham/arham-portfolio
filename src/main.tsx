@@ -4,10 +4,10 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 import './carousel.css';
 
 const IMAGES = [
- {src:'https://fifth-gentle-45902158.figma.site/_components/v2/4de492f6d9cf8244ad5293233e5c6f52407d42fc/1.02464a56.png',bg:'#F4845F',panel:'#F79B7F'},
- {src:'https://fifth-gentle-45902158.figma.site/_components/v2/4de492f6d9cf8244ad5293233e5c6f52407d42fc/2.b977faab.png',bg:'#6BBF7A',panel:'#85CC92'},
- {src:'https://fifth-gentle-45902158.figma.site/_components/v2/4de492f6d9cf8244ad5293233e5c6f52407d42fc/3.4df853b4.png',bg:'#E882B4',panel:'#ED9DC4'},
- {src:'https://fifth-gentle-45902158.figma.site/_components/v2/4de492f6d9cf8244ad5293233e5c6f52407d42fc/4.4457fbce.png',bg:'#6EB5FF',panel:'#8DC4FF'},
+ {src:'assets/arham-avatar.webp',bg:'#F4845F',panel:'#F79B7F'},
+ {src:'assets/arham-avatar.webp',bg:'#6BBF7A',panel:'#85CC92'},
+ {src:'assets/arham-avatar.webp',bg:'#E882B4',panel:'#ED9DC4'},
+ {src:'assets/arham-avatar.webp',bg:'#6EB5FF',panel:'#8DC4FF'},
 ];
 const STORIES=[
  {ghost:'DATA',title:'Investigate the detail.',body:'SQL, validation and enterprise reporting. Start with the evidence behind my Hitachi experience.',href:'#journey',cta:'THE EXPERIENCE'},
@@ -23,7 +23,7 @@ export function ToonhubCarousel(){
  const lock=useRef(false), timer=useRef<ReturnType<typeof setTimeout>|null>(null);
  const [failed,setFailed]=useState<number[]>([]);
  useEffect(()=>{
-  IMAGES.forEach((_,i)=>{const img=new Image();img.src=`assets/toon-${i+1}.webp`;});
+  const img=new Image();img.src=IMAGES[0].src;
   const resize=()=>setIsMobile(window.innerWidth<640);
   window.addEventListener('resize',resize);
   return()=>{window.removeEventListener('resize',resize);if(timer.current)clearTimeout(timer.current);};
@@ -37,14 +37,15 @@ export function ToonhubCarousel(){
  const story=STORIES[activeIndex];
  return <section className="toonhub relative w-full overflow-hidden" style={{backgroundColor:IMAGES[activeIndex].bg,transition:`background-color ${ease}`,fontFamily:'Inter, sans-serif'}} aria-label="Interactive portfolio introduction" aria-roledescription="carousel" onKeyDown={e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();navigate(e.key==='ArrowLeft'?'prev':'next');}}}>
   <div className="toon-grain absolute inset-0 pointer-events-none" aria-hidden="true"/>
-  <div className="toon-brand absolute">ARHAM / IN MOTION <span>DUBLIN, IRELAND</span></div>
+  <div className="toon-brand absolute">ARHAM / FOUR CHAPTERS <span>DUBLIN, IRELAND</span></div>
+  <span className="avatar-note">Illustrated avatar · Based on Arham</span>
   <div className="toon-ghost pointer-events-none select-none" aria-hidden="true">{story.ghost}</div>
   <div className="absolute inset-0 toon-characters" aria-hidden="true">
    {IMAGES.map((image,i)=>{
     const role=i===activeIndex?'center':i===(activeIndex+3)%4?'left':i===(activeIndex+1)%4?'right':'back';
     const center=role==='center',back=role==='back';
-    return <div key={image.src} className={`toon-character toon-${role}`} style={{position:'absolute',aspectRatio:'0.6 / 1',left:center||back?'50%':role==='left'?(isMobile?'17%':'19%'):(isMobile?'83%':'81%'),height:center?'84%':back?'25%':'35%',bottom:center?'0':'7%',transform:`translateX(-50%) scale(${center?1.18:1})`,filter:center?'none':`blur(${back?4:2}px)`,opacity:center||back?1:.85,zIndex:center?20:back?5:10,transition:`transform ${ease},filter ${ease},opacity ${ease},left ${ease},height ${ease},bottom ${ease}`,willChange:'transform, filter, opacity'}}>
-     {!failed.includes(i)?<img src={`assets/toon-${i+1}.webp`} alt="" draggable={false} onError={()=>setFailed(f=>f.includes(i)?f:[...f,i])}/>:<div className="toon-image-fallback">{STORIES[i].ghost}</div>}
+    return <div key={i} className={`toon-character toon-${role}`} style={{position:'absolute',aspectRatio:'0.6 / 1',left:center||back?'50%':role==='left'?(isMobile?'17%':'19%'):(isMobile?'83%':'81%'),height:center?'84%':back?'25%':'35%',bottom:center?'0':'7%',transform:`translateX(-50%) scale(${center?1.18:1})`,filter:center?'none':`blur(${back?4:2}px)`,opacity:center||back?1:.85,zIndex:center?20:back?5:10,transition:`transform ${ease},filter ${ease},opacity ${ease},left ${ease},height ${ease},bottom ${ease}`,willChange:'transform, filter, opacity'}}>
+     {!failed.includes(i)?<img src={image.src} alt="" draggable={false} onError={()=>setFailed(f=>f.includes(i)?f:[...f,i])}/>:<div className="toon-image-fallback">{STORIES[i].ghost}</div>}
     </div>;
    })}
   </div>
