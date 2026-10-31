@@ -77,3 +77,10 @@ Verified: public HTTP 200, local JavaScript/portrait/paper delivery, custom HTTP
 The foreground city uses original 3D coordinates projected into a native canvas. Drag/keyboard orbit, three camera presets, zoom and reset work without third-party runtime libraries. It is a stylised composition rather than a geographical model. Rendering pauses when off-screen or when the tab is hidden. Reduced motion and the Motion control use single-frame updates. The project shelf uses original CSS 3D covers based on the user's own project images, with native buttons, arrows and keyboard selection.
 
 Campus photo: The John and Aileen O`Reilly Library, by SSCOhA, 26 November 2016. Source https://commons.wikimedia.org/wiki/File:The_John_and_Aileen_O%60Reilly_Library.jpg . CC BY-SA 4.0: https://creativecommons.org/licenses/by-sa/4.0/ . The resized WebP and displayed crop remain under that licence; attribution appears beside the image.
+
+
+## Rotating signal edition
+
+The city model and its script were removed at Arham’s request. The foreground graphic now uses a two-dimensional rotating typographic ring, with Investigate / Explain / Deliver controls linked to the corresponding portfolio chapters. Motion off, reduced motion, hover and focus pause the rotation. The DCU section uses Arham’s supplied personal campus photograph, without visual modification.
+
+Primary address: https://arham-bi.vercel.app/ . The previous Vercel address remains attached to the same project for existing links.
