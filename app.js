@@ -75,7 +75,7 @@ updateMotion();
  $('film-play').addEventListener('click',async()=>{if(playing){video.pause();playing=false;$('film-play').textContent='▶ Play';}else{if(video.currentTime>=video.duration-.1)video.currentTime=0;playing=true;try{await video.play();$('film-play').textContent='Ⅱ Pause';}catch{playing=false;$('film-help').textContent='Playback could not start. Try the slider or open the original film.';}}});
  video.addEventListener('timeupdate',()=>{if(playing&&video.duration)range.value=String(video.currentTime/video.duration*100);});video.addEventListener('ended',()=>{playing=false;$('film-play').textContent='↻ Replay';});
  video.addEventListener('error',()=>{$('film-help').textContent='This film could not load. Open the original film using the source link above.';});
- new IntersectionObserver(entries=>{if(!entries[0].isIntersecting){video.pause();playing=false;$('film-play').textContent='▶ Play';host.querySelector('iframe')?.remove();host.querySelector('.film-invitation').hidden=false;}},{threshold:0}).observe($('dublin-film'));
+ new IntersectionObserver(entries=>{document.body.classList.toggle('film-in-view',entries[0].isIntersecting);if(!entries[0].isIntersecting){video.pause();playing=false;$('film-play').textContent='▶ Play';host.querySelector('iframe')?.remove();host.querySelector('.film-invitation').hidden=false;}},{threshold:0}).observe($('dublin-film'));
  function hint(){$('film-scroll-hint').textContent=reduced()?'Use Play or the slider to explore the crossing.':'Scroll slowly to move through the crossing.';}
  new MutationObserver(hint).observe(document.body,{attributes:true,attributeFilter:['class']});matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',hint);hint();
 })();
