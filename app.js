@@ -24,7 +24,7 @@ $('viewer-button').addEventListener('click',()=>$('profiles-dialog').showModal()
 $('award-open').addEventListener('click',()=>$('image-dialog').showModal());$('award-details').addEventListener('click',()=>$('image-dialog').showModal());$('skip-opening').addEventListener('click',finishOpening);$('replay').addEventListener('click',opening);document.addEventListener('keydown',e=>{if(!$('opening').hidden&&(e.key==='Escape'||e.key==='Enter'))finishOpening();});
 for(const [id,dir] of [['projects-prev',-1],['projects-next',1]])$(id).addEventListener('click',()=>$('project-rail').scrollBy({left:dir*$('project-rail').clientWidth*.7,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'}));
 const theme=stored('arham-series-theme');if(theme==='light')document.body.classList.add('light');function themeIcon(){const light=document.body.classList.contains('light');$('theme-toggle').textContent=light?'☾':'☀';$('theme-toggle').setAttribute('aria-label',light?'Switch to dark theme':'Switch to light theme');}themeIcon();$('theme-toggle').addEventListener('click',()=>{document.body.classList.toggle('light');save('arham-series-theme',document.body.classList.contains('light')?'light':'dark');themeIcon();});
-season('enterprise');const saved=stored('arham-series-profile');selectProfile(profiles[saved]?saved:'data',false);if(!saved&&window.location.hash==='')opening();
+season('enterprise');const saved=stored('arham-series-profile');selectProfile(profiles[saved]?saved:'data',false);
 })();
 
 // Dublin city layers: decorative, frame-limited and disabled for reduced motion.
@@ -42,7 +42,7 @@ function frame(){ticking=false;
  root.style.setProperty('--near-drift',enabled?`${Math.min(150,y*.05)}px`:'0px');
  const chapters=[...document.querySelectorAll('[data-city-scene]')];
  let current=chapters[0];for(const el of chapters){if(el.getBoundingClientRect().top<=window.innerHeight*.5)current=el;}
- const scene=current?.dataset.cityScene||'skyline';if(scene!==lastScene){body.dataset.cityScene=scene;document.getElementById('city-location').textContent=names[scene];lastScene=scene;}
+ const scene=current?.dataset.cityScene||'skyline';if(scene!==lastScene){body.dataset.cityScene=scene;const label=document.getElementById('city-location');if(label)label.textContent=names[scene];lastScene=scene;}
  const stopMap={top:'top',about:'journey',journey:'journey',dcu:'dcu',projects:'projects',skills:'projects',recognition:'projects',contact:'contact'};
  const stop=stopMap[current?.id]||'top';if(stop!==lastStop){document.querySelectorAll('[data-stop]').forEach(a=>{if(a.dataset.stop===stop)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current');});lastStop=stop;}
  const journey=document.getElementById('journey'),r=journey.getBoundingClientRect();root.style.setProperty('--journey-progress',String(Math.max(0,Math.min(1,(window.innerHeight-r.top)/(r.height+window.innerHeight)))));
@@ -53,4 +53,29 @@ toggle.addEventListener('click',()=>{userOff=!userOff;try{sessionStorage.setItem
 preference.addEventListener('change',updateMotion);window.addEventListener('scroll',queue,{passive:true});window.addEventListener('resize',queue,{passive:true});
 new MutationObserver(queue).observe(document.getElementById('story-sections'),{childList:true});
 updateMotion();
+})();
+
+// The original YouTube players remain intact; only the licensed local film is scrubbed.
+(()=>{
+ const $=id=>document.getElementById(id), video=$('bridge-film'),host=$('film-embed'),scroll=$('film-scroll'),range=$('film-position');
+ const scenes={spire:{kicker:'01 / O’CONNELL STREET',title:'On foot, towards<br>the Spire.',copy:'Join POPtravel’s city-centre walk at its O’Connell Street chapter.',button:'▶ Start the walk',credit:'Walking in Dublin · Daniel Sczepansky / POPtravel',source:'https://poptravel.org/videos/kFZQT7obIeU',youtube:'kFZQT7obIeU',start:4800,help:'O’Connell Street starts at 1:20:00 in the original tour. Use the player controls to explore.'},bridge:{credit:'Samuel Beckett Bridge · Luciann Photography / Pexels',source:'https://www.pexels.com/video/drone-footage-of-samuel-beckett-bridge-4003029/',help:'Real footage · Pexels licence · Resized and compressed for this portfolio.'},campus:{kicker:'03 / DUBLIN CITY UNIVERSITY',title:'A place to learn.<br>A reason to build.',copy:'Explore DCU’s academic campuses in the university’s official tour.',button:'▶ Explore DCU',credit:'DCU Campus Tour · DCU International Academy',source:'https://www.youtube.com/watch?v=awlsMiWws6k',youtube:'awlsMiWws6k',start:0,help:'Official DCU campus tour. Presented in its original player, separate from Arham’s research.'}};
+ let active='spire',playing=false,queued=false,target=0;
+ function reduced(){return matchMedia('(prefers-reduced-motion: reduce)').matches||document.body.classList.contains('motion-off');}
+ function select(id){const s=scenes[id];if(!s)return;active=id;playing=false;video.pause();$('film-play').textContent='▶ Play';host.querySelector('iframe')?.remove();const bridge=id==='bridge';video.hidden=!bridge;host.hidden=bridge;$('bridge-caption').hidden=!bridge;$('film-scrubber').hidden=!bridge;scroll.classList.toggle('is-bridge',bridge);$('film-credit').textContent=s.credit;$('film-source').href=s.source;$('film-help').textContent=s.help;document.querySelectorAll('[data-film]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.film===id)));$('film-next').textContent=id==='campus'?'Meet Arham ↓':'Next scene →';if(bridge){video.preload='auto';if(video.readyState===0)video.load();update();}else{host.querySelector('.film-invitation').hidden=false;$('film-kicker').textContent=s.kicker;$('film-scene-title').innerHTML=s.title;$('film-invite-copy').textContent=s.copy;$('film-load').textContent=s.button;}}
+ $('film-load').addEventListener('click',()=>{const s=scenes[active];if(!s.youtube)return;const iframe=document.createElement('iframe');iframe.title=active==='spire'?'POPtravel Dublin walking tour at O’Connell Street':'Official DCU campus tour';iframe.src=`https://www.youtube.com/embed/${s.youtube}?start=${s.start}&autoplay=1&playsinline=1&rel=0`;iframe.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';iframe.referrerPolicy='strict-origin-when-cross-origin';iframe.allowFullscreen=true;host.querySelector('.film-invitation').hidden=true;host.append(iframe);$('film-help').textContent='If the player cannot load, open “Original film” above to watch on the source site.';});
+ document.querySelectorAll('[data-film]').forEach(b=>b.addEventListener('click',()=>select(b.dataset.film)));
+ $('watch-campus').addEventListener('click',()=>select('campus'));
+ $('film-next').addEventListener('click',()=>{if(active==='campus'){$('top').scrollIntoView({behavior:reduced()?'instant':'smooth'});return;}select(active==='spire'?'bridge':'campus');$('dublin-film').scrollIntoView({behavior:reduced()?'instant':'smooth'});});
+ function seek(p){if(!Number.isFinite(video.duration))return;target=Math.max(0,Math.min(video.duration-.04,p*video.duration));if(!video.seeking)video.currentTime=target;range.value=String(p*100);}
+ video.addEventListener('seeked',()=>{if(!playing&&Math.abs(video.currentTime-target)>.08)video.currentTime=target;});
+ function update(){queued=false;if(active!=='bridge'||playing||reduced())return;const r=scroll.getBoundingClientRect(),distance=Math.max(1,scroll.offsetHeight-window.innerHeight);const p=Math.max(0,Math.min(1,(86-r.top)/distance));seek(p);}
+ function queue(){if(!queued){queued=true;requestAnimationFrame(update);}}
+ window.addEventListener('scroll',queue,{passive:true});window.addEventListener('resize',queue,{passive:true});video.addEventListener('loadedmetadata',update);
+ range.addEventListener('input',()=>{playing=false;video.pause();$('film-play').textContent='▶ Play';seek(Number(range.value)/100);});
+ $('film-play').addEventListener('click',async()=>{if(playing){video.pause();playing=false;$('film-play').textContent='▶ Play';}else{if(video.currentTime>=video.duration-.1)video.currentTime=0;playing=true;try{await video.play();$('film-play').textContent='Ⅱ Pause';}catch{playing=false;$('film-help').textContent='Playback could not start. Try the slider or open the original film.';}}});
+ video.addEventListener('timeupdate',()=>{if(playing&&video.duration)range.value=String(video.currentTime/video.duration*100);});video.addEventListener('ended',()=>{playing=false;$('film-play').textContent='↻ Replay';});
+ video.addEventListener('error',()=>{$('film-help').textContent='This film could not load. Open the original film using the source link above.';});
+ new IntersectionObserver(entries=>{if(!entries[0].isIntersecting){video.pause();playing=false;$('film-play').textContent='▶ Play';host.querySelector('iframe')?.remove();host.querySelector('.film-invitation').hidden=false;}},{threshold:0}).observe($('dublin-film'));
+ function hint(){$('film-scroll-hint').textContent=reduced()?'Use Play or the slider to explore the crossing.':'Scroll slowly to move through the crossing.';}
+ new MutationObserver(hint).observe(document.body,{attributes:true,attributeFilter:['class']});matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',hint);hint();
 })();
