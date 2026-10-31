@@ -1,67 +1,28 @@
-const toggle = document.getElementById('theme-toggle');
-const preferredTheme = localStorage.getItem('arham-portfolio-theme');
-
-if (preferredTheme === 'dark') document.body.classList.add('dark');
-
-const updateThemeIcon = () => {
-  const isDark = document.body.classList.contains('dark');
-  toggle.textContent = isDark ? '☀' : '☾';
-  toggle.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
-};
-
-updateThemeIcon();
-
-toggle.addEventListener('click', () => {
-  document.body.classList.toggle('dark');
-  localStorage.setItem('arham-portfolio-theme', document.body.classList.contains('dark') ? 'dark' : 'light');
-  updateThemeIcon();
-});
-
-const revealObserver = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-      revealObserver.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.12 });
-
-document.querySelectorAll('.reveal').forEach((element) => revealObserver.observe(element));
-
-const navLinks = [...document.querySelectorAll('.links a[href^="#"]')];
-const sections = navLinks
-  .map((link) => document.querySelector(link.getAttribute('href')))
-  .filter(Boolean);
-
-const sectionObserver = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
-    if (!entry.isIntersecting) return;
-    navLinks.forEach((link) => link.removeAttribute('aria-current'));
-    const activeLink = navLinks.find((link) => link.getAttribute('href') === '#' + entry.target.id);
-    if (activeLink) activeLink.setAttribute('aria-current', 'page');
-  });
-}, { rootMargin: '-30% 0px -60% 0px', threshold: 0 });
-
-sections.forEach((section) => sectionObserver.observe(section));
-const lightbox = document.getElementById('image-lightbox');
-const lightboxImage = document.getElementById('lightbox-image');
-const closeLightbox = lightbox?.querySelector('.lightbox-close');
-
-document.querySelectorAll('.project-shot').forEach((shot) => {
-  shot.addEventListener('click', () => {
-    const image = shot.querySelector('img');
-    lightboxImage.src = shot.dataset.lightbox;
-    lightboxImage.alt = image.alt;
-    lightbox.showModal();
-  });
-});
-
-closeLightbox?.addEventListener('click', () => lightbox.close());
-lightbox?.addEventListener('click', (event) => {
-  if (event.target === lightbox) lightbox.close();
-});
-
-const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-if (reduceMotion.matches) {
-  document.querySelectorAll('.reveal').forEach((element) => element.classList.add('is-visible'));
-}
+'use strict';
+(()=>{
+const $=id=>document.getElementById(id),projects=window.PORTFOLIO_PROJECTS;
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const profiles={recruiter:{name:'Recruiter',glyph:'R',order:['journey','projects','about','skills','recognition'],projectOrder:['ops','energy','customer','hr','relay']},data:{name:'Data & BI',glyph:'▥',order:['projects','about','skills','journey','recognition'],projectOrder:['ops','energy','customer','hr','relay']},support:{name:'Support',glyph:'⌘',order:['projects','journey','skills','about','recognition'],projectOrder:['ops','relay','customer','hr','energy']}};
+let activeProfile='data',introIndex=0,openingTimer=null;
+function stored(key){try{return sessionStorage.getItem(key);}catch{return null;}}
+function save(key,value){try{sessionStorage.setItem(key,value);}catch{}}
+function notify(text){$('toast').textContent=text;$('toast').classList.add('show');clearTimeout(notify.timer);notify.timer=setTimeout(()=>$('toast').classList.remove('show'),3000);}
+function cards(){const order=profiles[activeProfile].projectOrder;$('project-rail').innerHTML=order.map(id=>{const p=projects.find(x=>x.id===id);return `<article class="project-card"><button type="button" class="project-poster" data-open="${p.id}" style="--poster:${p.color}" aria-label="Explore ${esc(p.title)}"><img src="${p.image}" alt="" loading="lazy"><span class="poster-top"><b>A</b> ORIGINAL</span><span class="poster-number">${p.number}</span><h3>${esc(p.title)}</h3><p>${esc(p.subtitle)}</p><span class="poster-action">EXPLORE THIS PROJECT <b>▶</b></span></button><div class="project-meta"><span>${esc(p.category)}</span><span>View details +</span></div></article>`;}).join('');}
+function openProject(id){const p=projects.find(p=>p.id===id);if(!p)return;
+const links=[p.demo?`<a class="button primary" href="${p.demo}" target="_blank" rel="noreferrer">▶ Open live demo</a>`:'',p.code?`<a class="button glass" href="${p.code}" target="_blank" rel="noreferrer">Code on GitHub ↗</a>`:'',p.paper?`<a class="button primary" href="${p.paper}" target="_blank" rel="noreferrer">Read practicum paper ↗</a>`:''].join('');
+$('project-detail').innerHTML=`<div class="detail-banner" style="--poster:${p.color}"><img src="${p.image}" alt=""><p>${esc(p.type)}</p><h2 id="project-title">${esc(p.title)}</h2></div><div class="detail-body" style="--poster:${p.color}"><div class="detail-tags">${p.tags.map(t=>`<span>${esc(t)}</span>`).join('')}</div><p>${esc(p.description)}</p><h3>The approach</h3><p>${esc(p.approach)}</p><h3>The evidence</h3><ul class="detail-evidence">${p.evidence.map(e=>`<li>${esc(e)}</li>`).join('')}</ul><div class="detail-links">${links}</div><p class="detail-limit">${esc(p.limit)}</p></div>`;
+$('project-dialog').showModal();}
+function season(id){const episodes=window.PORTFOLIO_SEASONS[id];if(!episodes)return;document.querySelectorAll('[data-season]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.season===id)));$('season-content').innerHTML=episodes.map((e,i)=>`<article class="episode"><span class="episode-num">${String(i+1).padStart(2,'0')}</span><div><small>${esc(e.date)}</small><h3>${esc(e.title)}</h3><p class="org">${esc(e.org)}</p><p class="body">${esc(e.body)}</p></div></article>`).join('');}
+function selectProfile(id,announce=true){if(!profiles[id])return;activeProfile=id;save('arham-series-profile',id);$('viewer-name').textContent=profiles[id].name;$('viewer-glyph').textContent=profiles[id].glyph;const host=$('story-sections');for(const section of profiles[id].order)host.append($(section));cards();if($('profiles-dialog').open)$('profiles-dialog').close();if(announce)notify(`Exploring as ${profiles[id].name}. All projects and details remain available.`);}
+const intro=[{n:'01',title:'Enterprise systems. Practical problems.',text:'My foundation is 2.5+ years at Hitachi Digital Services, working across Oracle-based enterprise systems, SQL, reporting, data investigation and application support.'},{n:'02',title:'A deeper understanding of the data.',text:'I completed an MSc Computing (Data Analytics) at Dublin City University. My co-authored practicum explored XGBoost forecasting, SHAP explanations and LLM-assisted residential energy scheduling.'},{n:'03',title:'See the work for yourself.',text:'Explore OpsResolve AI, the energy practicum and three new fictional-data demonstrations: Customer Lens, Workforce Atlas and Report Relay. I’m looking for data, BI, reporting and application-support opportunities in Dublin and Ireland.'}];
+function introSlide(){const s=intro[introIndex];$('intro-content').innerHTML=`<div class="intro-slide"><p class="chapter">${s.n}</p><h2 id="intro-title">${s.title}</h2><p>${s.text}</p></div>`;$('intro-progress').textContent=`Chapter ${introIndex+1} of ${intro.length}`;$('intro-prev').disabled=introIndex===0;$('intro-next').disabled=introIndex===intro.length-1;}
+function finishOpening(){clearTimeout(openingTimer);$('opening').hidden=true;$('opening').setAttribute('aria-hidden','true');if(!$('profiles-dialog').open)$('profiles-dialog').showModal();}
+function opening(){document.querySelectorAll('dialog[open]').forEach(d=>d.close());$('opening').hidden=false;$('opening').setAttribute('aria-hidden','false');$('skip-opening').focus();openingTimer=setTimeout(finishOpening,window.matchMedia('(prefers-reduced-motion: reduce)').matches?0:1100);}
+document.addEventListener('click',e=>{const open=e.target.closest('[data-open]');if(open)openProject(open.dataset.open);const profile=e.target.closest('[data-profile]');if(profile)selectProfile(profile.dataset.profile);const tab=e.target.closest('[data-season]');if(tab)season(tab.dataset.season);});
+document.querySelectorAll('dialog').forEach(d=>{d.querySelector('.dialog-close').addEventListener('click',()=>d.close());d.addEventListener('click',e=>{if(e.target===d){const r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)d.close();}});});
+$('viewer-button').addEventListener('click',()=>$('profiles-dialog').showModal());$('play-intro').addEventListener('click',()=>{introIndex=0;introSlide();$('intro-dialog').showModal();});$('intro-prev').addEventListener('click',()=>{if(introIndex>0){introIndex--;introSlide();}});$('intro-next').addEventListener('click',()=>{if(introIndex<intro.length-1){introIndex++;introSlide();}});$('intro-dialog').addEventListener('keydown',e=>{if(e.key==='ArrowRight'&&introIndex<2){introIndex++;introSlide();}if(e.key==='ArrowLeft'&&introIndex>0){introIndex--;introSlide();}});
+$('award-open').addEventListener('click',()=>$('image-dialog').showModal());$('award-details').addEventListener('click',()=>$('image-dialog').showModal());$('skip-opening').addEventListener('click',finishOpening);$('replay').addEventListener('click',opening);document.addEventListener('keydown',e=>{if(!$('opening').hidden&&(e.key==='Escape'||e.key==='Enter'))finishOpening();});
+for(const [id,dir] of [['projects-prev',-1],['projects-next',1]])$(id).addEventListener('click',()=>$('project-rail').scrollBy({left:dir*$('project-rail').clientWidth*.7,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'}));
+const theme=stored('arham-series-theme');if(theme==='light')document.body.classList.add('light');function themeIcon(){const light=document.body.classList.contains('light');$('theme-toggle').textContent=light?'☾':'☀';$('theme-toggle').setAttribute('aria-label',light?'Switch to dark theme':'Switch to light theme');}themeIcon();$('theme-toggle').addEventListener('click',()=>{document.body.classList.toggle('light');save('arham-series-theme',document.body.classList.contains('light')?'light':'dark');themeIcon();});
+season('enterprise');const saved=stored('arham-series-profile');selectProfile(profiles[saved]?saved:'data',false);if(!saved&&window.location.hash==='')opening();
+})();

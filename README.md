@@ -1,40 +1,37 @@
-# Arham Saquib | Data Analyst & ERP Portfolio
+# Arham · The Data Series
 
-A public, responsive personal portfolio for **Shaik Arham Saquib**, focused on Data Analytics, Oracle ERP, Business Intelligence and enterprise systems support.
+Shaik Arham Saquib's cinematic portfolio for business intelligence, data analytics, reporting and application support opportunities in Dublin and Ireland.
 
-## Live website
-
-[View the portfolio](https://shaikarham.github.io/arham-portfolio/)
-
-## Highlights
-
-- 2.5+ years of Data Analytics, ERP and BI support experience at Hitachi Digital Services
-- MSc Computing (Data Analytics), Dublin City University
-- SQL, PL/SQL, Python, Power BI, Oracle ERP, OBIA/ODI and Oracle APEX
-- Award-recognised BI transition work
-- Explainable AI practicum covering XGBoost, SHAP and household energy scheduling
-
-## Featured project
-
-[OpsResolve AI](https://shaikarham.github.io/opsresolve-ai/) is an interactive enterprise-support intelligence workspace. It includes incident analytics, SLA visibility, troubleshooting procedures and reviewable triage recommendations.
-
-## Project structure
-
-- `index.html` — page content and semantic structure
-- `style.css` — responsive layout, visual styling, light/dark themes
-- `app.js` — theme persistence, scroll reveals and active navigation
-- `.github/workflows/static.yml` — GitHub Pages deployment workflow
+A static HTML/CSS/JavaScript site, hosted at https://shaikarham.github.io/arham-portfolio/.
 
 ## Run locally
 
-Open the folder with a simple static web server, then visit `index.html`.
-
 ```bash
-python3 -m http.server 8000
+python -m http.server 8000
 ```
 
-Then open `http://localhost:8000`.
+Open http://localhost:8000. No dependencies or build step are needed.
 
-## Notes
+## Update content
 
-The portfolio uses professional images and practicum visuals from the original portfolio site. The practicum PDF remains linked to its existing public location and is not stored in this repository.
+- `portfolio-data.js`: five project descriptions, demo/code links, evidence and career-season content.
+- `index.html`: professional introduction, skills, recognition, education and contact details.
+- `style.css`: responsive streaming-inspired visual design and light/dark themes.
+- `app.js`: profile views, opening sequence, project dialogs, intro chapters, season tabs and theme controls.
+- `assets/`: the existing CV, portrait, certificate, practicum paper and project screenshots.
+
+The viewer selector changes section/project ordering, not qualifications or results. Session storage remembers the selected view and theme. There are no analytics, contact-form submissions or backend services.
+
+## Projects and evidence
+
+OpsResolve AI and the co-authored DCU energy practicum appear alongside three new October 2026 fictional-data demonstrations: Customer Lens, Workforce Atlas and Report Relay. Demo figures are sample statistics, not commercial improvements. The analytics dashboards do not claim to be Power BI `.pbix` implementations.
+
+Enterprise role titles and dates are preserved from the previous portfolio. Education is presented without grades. The practicum is credited as co-authored and research limitations are explicit.
+
+## Accessibility
+
+Native dialogs support Escape and modal focus handling. Buttons have visible keyboard focus states. Reduced-motion preference disables animations and smooth scrolling. The intro is skippable. Core professional information and project links remain available without JavaScript.
+
+## Design reference
+
+The cinematic streaming-portfolio concept was requested with [Sushmita Dasari's Portfolio_series](https://github.com/Sushmitadasari/Portfolio_series) as a reference. This implementation is original HTML/CSS/JavaScript and does not reuse that repository's source code, photos or personal content. It is not affiliated with a streaming platform.
