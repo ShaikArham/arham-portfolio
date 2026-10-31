@@ -84,3 +84,7 @@ Campus photo: The John and Aileen O`Reilly Library, by SSCOhA, 26 November 2016.
 The city model and its script were removed at Arham’s request. The foreground graphic now uses a two-dimensional rotating typographic ring, with Investigate / Explain / Deliver controls linked to the corresponding portfolio chapters. Motion off, reduced motion, hover and focus pause the rotation. The DCU section uses Arham’s supplied personal campus photograph, without visual modification.
 
 Primary address: https://arham-bi.vercel.app/ . The previous Vercel address remains attached to the same project for existing links.
+
+## Character carousel edition
+The hero side panel is React + TypeScript, built with Vite and Tailwind utilities. Lucide supplies the arrow icons. Run `npm ci` then `npm run build`. The checked-in `carousel-build` supports the existing static publish pipeline. Four optimized WebP assets preserve the supplied Figma reference characters. Original image URLs remain in `src/main.tsx`; imagery is decorative, not a representation of employment or research. No license ownership is claimed for the supplied artwork.
+Manual checks: next/previous wrapping, rapid-click lock, keyboard arrows, reduced motion, local image delivery and DCU image preservation.

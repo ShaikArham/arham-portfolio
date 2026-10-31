@@ -17,7 +17,7 @@ assert(!/<(?:iframe|video)\b/i.test(html),'Embedded media must stay absent');
 assert(!/youtube|youtu\.be/i.test(html+js),'YouTube must stay absent');
 assert.equal((html.match(/<h1\b/g)||[]).length,1,'One main heading required');
 for(const img of html.matchAll(/<img\b([^>]+)>/g))assert(/\balt="[^"]*"/.test(img[1]),'Image missing alternative text');
-for(const id of ['menu-toggle','main-nav','project-count','project-rail','motion-toggle','theme-toggle','signal-title','project-shelf'])assert(ids.includes(id),`Missing control ${id}`);
+for(const id of ['menu-toggle','main-nav','project-count','project-rail','motion-toggle','theme-toggle','hero-carousel','project-shelf'])assert(ids.includes(id),`Missing control ${id}`);
 const context={window:{}};runInNewContext(read('portfolio-data.js'),context);const p=context.window.PORTFOLIO_PROJECTS;
 assert.equal(p.length,5);assert.equal(p[0].id,'ops');assert.equal(p[1].id,'energy');
 for(const item of p){assert(existsSync(join(root,item.image)));assert(item.evidence.length);assert(item.limit);assert(item.demo||item.paper);for(const key of ['demo','code'])if(item[key])assert.equal(new URL(item[key]).protocol,'https:');}

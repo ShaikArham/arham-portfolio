@@ -36,3 +36,5 @@
 @media(max-width:1100px){.signal-top{font-size:9px}.signal-stage{min-height:420px}.signal-orbit{height:420px}.signal-core{width:220px;height:220px}.signal-core strong{font-size:49px}.signal-spark{font-size:58px}.signal-sticker{font-size:9px;padding:8px 10px}.sticker-one{left:12px;top:40px}.sticker-two{right:12px;bottom:35px}}
 @media(max-width:600px){.signal-top{padding:20px 17px 0;font-size:8px;flex-direction:column;gap:2px}.signal-stage{min-height:360px}.signal-orbit{height:360px;min-width:360px}.signal-core{width:194px;height:194px}.signal-core strong{font-size:44px}.signal-spark{font-size:49px;margin-bottom:7px}.signal-small{font-size:8px}.signal-location{font-size:8px}.signal-sticker{font-size:8px;padding:7px 8px}.sticker-one{top:32px;left:10px}.sticker-two{bottom:24px;right:10px}.signal-tabs{padding-inline:13px;gap:5px}.signal-tabs button{font-size:11px}#signal-description{padding:18px 19px 0;font-size:12px;min-height:78px}#signal-link{font-size:12px}}
 @media(prefers-reduced-motion:reduce){.signal-orbit,.signal-spark{animation:none!important}}
+
+body{font-family:Inter,sans-serif}.hero-carousel-mount{min-width:0;width:100%}
