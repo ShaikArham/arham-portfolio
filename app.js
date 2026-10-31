@@ -2,7 +2,7 @@
 (()=>{
 const $=id=>document.getElementById(id),projects=window.PORTFOLIO_PROJECTS;
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const profiles={recruiter:{name:'Recruiter',glyph:'R',order:['journey','projects','about','skills','recognition'],projectOrder:['ops','energy','customer','hr','relay']},data:{name:'Data & BI',glyph:'▥',order:['projects','about','skills','journey','recognition'],projectOrder:['ops','energy','customer','hr','relay']},support:{name:'Support',glyph:'⌘',order:['projects','journey','skills','about','recognition'],projectOrder:['ops','relay','customer','hr','energy']}};
+const profiles={recruiter:{name:'Recruiter',glyph:'R',order:['journey','about','dcu','projects','skills','recognition'],projectOrder:['ops','energy','customer','hr','relay']},data:{name:'Data & BI',glyph:'▥',order:['about','journey','dcu','projects','skills','recognition'],projectOrder:['ops','energy','customer','hr','relay']},support:{name:'Support',glyph:'⌘',order:['journey','projects','dcu','skills','about','recognition'],projectOrder:['ops','relay','customer','hr','energy']}};
 let activeProfile='data',introIndex=0,openingTimer=null;
 function stored(key){try{return sessionStorage.getItem(key);}catch{return null;}}
 function save(key,value){try{sessionStorage.setItem(key,value);}catch{}}
@@ -25,4 +25,32 @@ $('award-open').addEventListener('click',()=>$('image-dialog').showModal());$('a
 for(const [id,dir] of [['projects-prev',-1],['projects-next',1]])$(id).addEventListener('click',()=>$('project-rail').scrollBy({left:dir*$('project-rail').clientWidth*.7,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'}));
 const theme=stored('arham-series-theme');if(theme==='light')document.body.classList.add('light');function themeIcon(){const light=document.body.classList.contains('light');$('theme-toggle').textContent=light?'☾':'☀';$('theme-toggle').setAttribute('aria-label',light?'Switch to dark theme':'Switch to light theme');}themeIcon();$('theme-toggle').addEventListener('click',()=>{document.body.classList.toggle('light');save('arham-series-theme',document.body.classList.contains('light')?'light':'dark');themeIcon();});
 season('enterprise');const saved=stored('arham-series-profile');selectProfile(profiles[saved]?saved:'data',false);if(!saved&&window.location.hash==='')opening();
+})();
+
+// Dublin city layers: decorative, frame-limited and disabled for reduced motion.
+(()=>{
+const root=document.documentElement,body=document.body;
+const preference=window.matchMedia('(prefers-reduced-motion: reduce)');
+let userOff=false;try{userOff=sessionStorage.getItem('arham-city-motion')==='off';}catch{}
+let ticking=false,enabled=true,lastScene='',lastStop='';
+const toggle=document.getElementById('motion-toggle');
+const names={skyline:'Dublin / The Spire',bridges:'The Liffey / Connections',campus:'DCU / The research chapter',docklands:'Docklands / Ideas at work',bay:'Dublin / The next chapter'};
+function frame(){ticking=false;
+ const max=Math.max(1,document.documentElement.scrollHeight-window.innerHeight);
+ const y=window.scrollY;root.style.setProperty('--city-progress',String(Math.min(1,y/max)));
+ root.style.setProperty('--city-drift',enabled?`${Math.min(100,y*.025)}px`:'0px');
+ root.style.setProperty('--near-drift',enabled?`${Math.min(150,y*.05)}px`:'0px');
+ const chapters=[...document.querySelectorAll('[data-city-scene]')];
+ let current=chapters[0];for(const el of chapters){if(el.getBoundingClientRect().top<=window.innerHeight*.5)current=el;}
+ const scene=current?.dataset.cityScene||'skyline';if(scene!==lastScene){body.dataset.cityScene=scene;document.getElementById('city-location').textContent=names[scene];lastScene=scene;}
+ const stopMap={top:'top',about:'journey',journey:'journey',dcu:'dcu',projects:'projects',skills:'projects',recognition:'projects',contact:'contact'};
+ const stop=stopMap[current?.id]||'top';if(stop!==lastStop){document.querySelectorAll('[data-stop]').forEach(a=>{if(a.dataset.stop===stop)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current');});lastStop=stop;}
+ const journey=document.getElementById('journey'),r=journey.getBoundingClientRect();root.style.setProperty('--journey-progress',String(Math.max(0,Math.min(1,(window.innerHeight-r.top)/(r.height+window.innerHeight)))));
+}
+function queue(){if(!ticking){ticking=true;requestAnimationFrame(frame);}}
+function updateMotion(){enabled=!preference.matches&&!userOff;body.classList.toggle('motion-off',!enabled);toggle.textContent=preference.matches?'Motion reduced':enabled?'Motion on':'Motion off';toggle.setAttribute('aria-pressed',String(enabled));toggle.setAttribute('aria-label',enabled?'Turn off city motion':'Turn on city motion');toggle.disabled=preference.matches;queue();}
+toggle.addEventListener('click',()=>{userOff=!userOff;try{sessionStorage.setItem('arham-city-motion',userOff?'off':'on');}catch{}updateMotion();});
+preference.addEventListener('change',updateMotion);window.addEventListener('scroll',queue,{passive:true});window.addEventListener('resize',queue,{passive:true});
+new MutationObserver(queue).observe(document.getElementById('story-sections'),{childList:true});
+updateMotion();
 })();

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 850" fill="none"><path d="M0 722h1600" stroke="#628799" stroke-width="3"/><path d="M0 740h1600" stroke="#213f54" stroke-width="16"/>
+<!-- Ha'penny Bridge inspired arched pedestrian crossing. -->
+<path d="M150 723q160-200 320 0" stroke="#b9cbd3" stroke-width="7"/><path d="M150 735q160-146 320 0" stroke="#89a9b8" stroke-width="5"/><path d="M183 688v32m32-63v44m32-65v49m32-60v48m32-53v48m32-42v47m32-30v44m32-13v34m32 7v25" stroke="#adc2cc" stroke-width="3"/>
+<!-- Samuel Beckett Bridge inspired leaning pylon and cable fan. -->
+<path d="M935 720h510" stroke="#bfd0d8" stroke-width="7"/><path d="M1130 720q190-100 80-333" stroke="#c7d5dc" stroke-width="10"/><path d="m1210 392-56 328m69-302-35 302m45-270-13 270m20-231 13 231m-8-194 40 194m-38-156 70 156m-71-123 105 123m-111-91 140 91m-151-62 176 62" stroke="#8caabb" stroke-width="1.5" opacity=".8"/><circle cx="1130" cy="720" r="10" fill="#d9af76"/><path d="M20 737h1560" stroke="#d8ad73" stroke-opacity=".5" stroke-width="1"/>
+</svg>
