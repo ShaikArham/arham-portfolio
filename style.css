@@ -45,3 +45,6 @@ body{font-family:Inter,sans-serif}.hero-carousel-mount{min-width:0;width:100%}
 @media(max-width:1000px){.contact-layout{gap:30px;grid-template-columns:1fr 1.1fr}.contact-form{padding:24px}.form-pair{grid-template-columns:1fr;gap:0}}
 @media(max-width:800px){.contact-layout{grid-template-columns:1fr;gap:35px}.hero-positioning{padding:26px 18px;margin:0 -2px}.hero-suit-backdrop{object-position:60% 30%;opacity:.28}.contact-intro h2{font-size:65px}.contact-form{max-width:650px;width:100%}}
 @media(max-width:480px){.contact-form{padding:22px 18px}.contact-form h3{font-size:21px}.hero-positioning h1{font-size:61px}.form-actions .button{min-height:46px;font-size:12px}.contact-intro h2{font-size:58px}}
+
+.immersive-hero{display:block;padding:85px 0 0;min-height:0;background:#0b1511}.hero-carousel-mount{width:100%}.proof-ribbon{margin:0 5vw;padding:25px 0}.form-honey{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}.wordmark{font-family:var(--font-heading,'Helvetica Neue',Arial,sans-serif)}
+@media(max-width:800px){.immersive-hero{padding:85px 0 0}.proof-ribbon{margin:0 22px}}

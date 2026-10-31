@@ -13,7 +13,7 @@ for(const [,src] of html.matchAll(/(?:src|href)="([^"#]+)"/g)){
  if(/^(https?:|mailto:|data:)/.test(src))continue;
  const f=src.split('?')[0];assert(existsSync(join(root,f)),`Missing local asset ${f}`);
 }
-assert(!/<(?:iframe|video)\b/i.test(html),'Embedded media must stay absent');
+assert(!/<iframe\b/i.test(html),'Embedded frames must stay absent');
 assert(!/youtube|youtu\.be/i.test(html+js),'YouTube must stay absent');
 assert.equal((html.match(/<h1\b/g)||[]).length,1,'One main heading required');
 for(const img of html.matchAll(/<img\b([^>]+)>/g))assert(/\balt="[^"]*"/.test(img[1]),'Image missing alternative text');

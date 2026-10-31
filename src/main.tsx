@@ -1,63 +1,30 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { createRoot } from 'react-dom/client';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import React,{useEffect,useRef,useState} from 'react';
+import{createRoot}from'react-dom/client';
 import './carousel.css';
-
-const IMAGES = [
- {src:'assets/arham-avatar.webp',bg:'#F4845F',panel:'#F79B7F'},
- {src:'assets/arham-avatar.webp',bg:'#6BBF7A',panel:'#85CC92'},
- {src:'assets/arham-avatar.webp',bg:'#E882B4',panel:'#ED9DC4'},
- {src:'assets/arham-avatar.webp',bg:'#6EB5FF',panel:'#8DC4FF'},
+const VIDEO='https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260826_041744_63efcd78-bf7d-4039-99e2-2461e8a61903.mp4';
+const CHAPTERS=[
+ {name:'The introduction',word:'DATA',label:'Hi, I’m Arham. Based in Dublin.',title:'Complex data. Clear decisions.',text:'I investigate reporting problems, connect enterprise systems and make analysis explainable. What can I help your team solve?',link:'#journey',cta:'Explore my experience',bg:'#842b39'},
+ {name:'The projects',word:'BUILD',label:'Working ideas. Visible evidence.',title:'Open the work. See the thinking.',text:'Five projects. Different problems. Explore working demos, readable methods and the evidence behind each one.',link:'#projects',cta:'Explore the projects',bg:'#234b51'},
+ {name:'The research',word:'EXPLAIN',label:'Dublin City University / MSc research',title:'A prediction needs an explanation.',text:'My co-authored practicum connects XGBoost forecasts, SHAP explanations and residential energy scheduling.',link:'#dcu',cta:'Explore the DCU research',bg:'#484061'},
+ {name:'The conversation',word:'NEXT',label:'Dublin & Ireland / Open to opportunities',title:'Let’s build the next chapter.',text:'Looking for a BI, data, reporting or application-support colleague? Send me a message directly below.',link:'#contact',cta:'Let’s talk',bg:'#304b3f'},
 ];
-const STORIES=[
- {ghost:'DATA',title:'Investigate the detail.',body:'SQL, validation and enterprise reporting. Start with the evidence behind my Hitachi experience.',href:'#journey',cta:'THE EXPERIENCE'},
- {ghost:'BUILD',title:'Make the work tangible.',body:'Explore five projects, working demonstrations and the methods behind each one.',href:'#projects',cta:'THE PROJECTS'},
- {ghost:'XAI',title:'Explain the prediction.',body:'Co-authored DCU research connecting XGBoost forecasts, SHAP explanations and energy scheduling.',href:'#dcu',cta:'THE RESEARCH'},
- {ghost:'NEXT',title:'Start a conversation.',body:'Based in Dublin. Open to BI, data analytics, reporting and application-support opportunities.',href:'#contact',cta:'LET’S TALK'},
-];
-const ease='650ms cubic-bezier(0.4,0,0.2,1)';
-export function ToonhubCarousel(){
- const [activeIndex,setActiveIndex]=useState(0);
- const [isAnimating,setIsAnimating]=useState(false);
- const [isMobile,setIsMobile]=useState(()=>window.innerWidth<640);
- const lock=useRef(false), timer=useRef<ReturnType<typeof setTimeout>|null>(null);
- const [failed,setFailed]=useState<number[]>([]);
- useEffect(()=>{
-  const img=new Image();img.src=IMAGES[0].src;
-  const resize=()=>setIsMobile(window.innerWidth<640);
-  window.addEventListener('resize',resize);
-  return()=>{window.removeEventListener('resize',resize);if(timer.current)clearTimeout(timer.current);};
- },[]);
- const navigate=(direction:'next'|'prev')=>{
-  if(lock.current)return;
-  lock.current=true;setIsAnimating(true);
-  setActiveIndex(i=>(i+(direction==='next'?1:3))%4);
-  timer.current=setTimeout(()=>{lock.current=false;setIsAnimating(false);},650);
- };
- const story=STORIES[activeIndex];
- return <section className="toonhub relative w-full overflow-hidden" style={{backgroundColor:IMAGES[activeIndex].bg,transition:`background-color ${ease}`,fontFamily:'Inter, sans-serif'}} aria-label="Interactive portfolio introduction" aria-roledescription="carousel" onKeyDown={e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();navigate(e.key==='ArrowLeft'?'prev':'next');}}}>
-  <div className="toon-grain absolute inset-0 pointer-events-none" aria-hidden="true"/>
-  <div className="toon-brand absolute">ARHAM / FOUR CHAPTERS <span>DUBLIN, IRELAND</span></div>
-  <span className="avatar-note">Illustrated avatar · Based on Arham</span>
-  <div className="toon-ghost pointer-events-none select-none" aria-hidden="true">{story.ghost}</div>
-  <div className="absolute inset-0 toon-characters" aria-hidden="true">
-   {IMAGES.map((image,i)=>{
-    const role=i===activeIndex?'center':i===(activeIndex+3)%4?'left':i===(activeIndex+1)%4?'right':'back';
-    const center=role==='center',back=role==='back';
-    return <div key={i} className={`toon-character toon-${role}`} style={{position:'absolute',aspectRatio:'0.6 / 1',left:center||back?'50%':role==='left'?(isMobile?'17%':'19%'):(isMobile?'83%':'81%'),height:center?'84%':back?'25%':'35%',bottom:center?'0':'7%',transform:`translateX(-50%) scale(${center?1.18:1})`,filter:center?'none':`blur(${back?4:2}px)`,opacity:center||back?1:.85,zIndex:center?20:back?5:10,transition:`transform ${ease},filter ${ease},opacity ${ease},left ${ease},height ${ease},bottom ${ease}`,willChange:'transform, filter, opacity'}}>
-     {!failed.includes(i)?<img src={image.src} alt="" draggable={false} onError={()=>setFailed(f=>f.includes(i)?f:[...f,i])}/>:<div className="toon-image-fallback">{STORIES[i].ghost}</div>}
-    </div>;
-   })}
-  </div>
-  <div className="toon-bottom absolute" style={{backgroundColor:IMAGES[activeIndex].panel,transition:`background-color ${ease}`}}>
-   <div className="toon-caption" aria-live="polite" aria-atomic="true"><span className="toon-count">0{activeIndex+1} / 04</span><h2>{story.title}</h2><p>{story.body}</p></div>
-   <div className="toon-controls flex items-center">
-    <button type="button" aria-label="Previous portfolio story" aria-disabled={isAnimating} onClick={()=>navigate('prev')}><ArrowLeft size={26} strokeWidth={2.25}/></button>
-    <button type="button" aria-label="Next portfolio story" aria-disabled={isAnimating} onClick={()=>navigate('next')}><ArrowRight size={26} strokeWidth={2.25}/></button>
-    <a href={story.href}>{story.cta}<ArrowRight size={22} strokeWidth={2.25}/></a>
-   </div>
-  </div>
+export function useTypewriter(text:string,speed=38,startDelay=600){const[displayed,setDisplayed]=useState('');useEffect(()=>{setDisplayed('');if(matchMedia('(prefers-reduced-motion: reduce)').matches){setDisplayed(text);return;}let interval:ReturnType<typeof setInterval>;const timeout=setTimeout(()=>{let i=0;interval=setInterval(()=>{i++;setDisplayed(text.slice(0,i));if(i>=text.length)clearInterval(interval);},speed);},startDelay);return()=>{clearTimeout(timeout);clearInterval(interval);};},[text,speed,startDelay]);return{displayed,done:displayed===text};}
+function Hero(){
+ const[index,setIndex]=useState(0),[ready,setReady]=useState(false),[copyStatus,setCopyStatus]=useState('');
+ const hero=useRef<HTMLElement>(null),video=useRef<HTMLVideoElement>(null),lock=useRef(false),timer=useRef<ReturnType<typeof setTimeout>|null>(null),touch=useRef<{x:number;y:number}|null>(null),target=useRef(0);
+ const chapter=CHAPTERS[index];const{displayed,done}=useTypewriter(chapter.text,27,350);
+ const navigate=(direction:number)=>{if(lock.current)return;lock.current=true;setIndex(i=>(i+direction+4)%4);timer.current=setTimeout(()=>lock.current=false,650);};
+ useEffect(()=>{const t=setTimeout(()=>setReady(true),400);const img=new Image();img.src='assets/arham-avatar.webp';return()=>{clearTimeout(t);if(timer.current)clearTimeout(timer.current);};},[]);
+ const seek=()=>{const v=video.current;if(v&&Number.isFinite(v.duration)&&!v.seeking&&Math.abs(v.currentTime-target.current)>.035)v.currentTime=target.current;};
+ useEffect(()=>{let prevX:number|null=null;const move=(e:MouseEvent)=>{if(matchMedia('(prefers-reduced-motion: reduce)').matches||document.body.classList.contains('motion-off'))return;const box=hero.current?.getBoundingClientRect();if(!box||box.bottom<0||box.top>innerHeight)return;hero.current?.style.setProperty('--pointer-x',String((e.clientX/innerWidth-.5)*18)+'px');const v=video.current;if(v&&Number.isFinite(v.duration)){if(prevX!==null){target.current=Math.max(0,Math.min(v.duration-.04,target.current+(e.clientX-prevX)/innerWidth*.8*v.duration));seek();}}prevX=e.clientX;};window.addEventListener('mousemove',move,{passive:true});return()=>window.removeEventListener('mousemove',move);},[]);
+ return <section ref={hero} className={`mainframe-hero relative w-full overflow-hidden scene-${index}`} style={{backgroundColor:chapter.bg}} aria-label="Arham’s portfolio introduction" onTouchStart={e=>{touch.current={x:e.touches[0].clientX,y:e.touches[0].clientY};}} onTouchEnd={e=>{if(!touch.current)return;const dx=e.changedTouches[0].clientX-touch.current.x,dy=e.changedTouches[0].clientY-touch.current.y;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.4)navigate(dx<0?1:-1);touch.current=null;}}>
+ <video ref={video} className="mainframe-video" muted playsInline preload="metadata" src={VIDEO} onSeeked={seek} aria-hidden="true" tabIndex={-1}/>
+ <div className="mainframe-shade" aria-hidden="true"/>
+ <div className="mainframe-ghost" aria-hidden="true">{chapter.word}</div>
+ <img className="mainframe-avatar" src="assets/arham-avatar.webp" alt="Illustrated character based on Arham, wearing a navy suit and holding a laptop" width="800" height="1200" draggable={false}/>
+ <div className="mainframe-copy"><p className="mainframe-label">{chapter.label}</p><h1 id="hero-title">{chapter.title}</h1><p className="mainframe-typewriter" aria-label={chapter.text}><span aria-hidden="true">{displayed}{!done&&<i className="typing-cursor"/>}</span></p>
+ <div className={`mainframe-pills ${ready?'pills-ready':''}`}><a href={chapter.link}>{chapter.cta} ↗</a><a href="#projects">See my work</a><a href="#contact">Send a brief hello</a><a href="assets/Shaik_Arham_Saquib.pdf" download>Download CV ↓</a><button type="button" className="copy-email" onClick={async()=>{try{await navigator.clipboard.writeText('sarhamsaquib@gmail.com');setCopyStatus('Email copied.');}catch{setCopyStatus('Email: sarhamsaquib@gmail.com');}}}>Reach me: <u>sarhamsaquib@gmail.com</u><svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><rect x="4" y="4" width="7" height="7" stroke="currentColor"/><path d="M8 2H2v6" stroke="currentColor"/></svg></button></div><p className="copy-status" role="status">{copyStatus}</p></div>
+ <div className="mainframe-bottom"><span>ARHAM SAQUIB / THE DUBLIN EDITION</span><div className="chapter-controls flex items-center"><button type="button" aria-label="Previous chapter" onClick={()=>navigate(-1)}>←</button><span aria-live="polite">0{index+1} / 04 · {chapter.name}</span><button type="button" aria-label="Next chapter" onClick={()=>navigate(1)}>→</button></div><span className="swipe-hint">Swipe or use the arrows ↔</span></div>
  </section>;
 }
-const mount=document.getElementById('hero-carousel');
-if(mount)createRoot(mount).render(<ToonhubCarousel/>);
+const mount=document.getElementById('hero-carousel');if(mount)createRoot(mount).render(<Hero/>);
