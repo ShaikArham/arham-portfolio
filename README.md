@@ -45,12 +45,3 @@ The Liffey-inspired chapter route links introduction, experience, DCU, projects 
 `app.js` updates decorative scene state and small parallax offsets through requestAnimationFrame, using a passive scroll listener. The navigation remains native anchor scrolling with no scroll interception. Reduced-motion preferences and the visible Motion control disable decorative movement. Mobile breakpoints simplify the composition. Theme switching changes the blue-hour sky to a daylight palette.
 
 Artwork: `assets/dublin/`. Interface additions and overrides appear in the Dublin edition block of `style.css`.
-
-
-## Foreground film edition
-
-The introductory Dublin film section replaces decorative landmark backgrounds. The Spire chapter embeds POPtravel’s original Dublin city walk from the published O’Connell Street chapter at 1:20:00. The DCU chapter embeds the official DCU Campus Tour - English (DCU International Academy). Those videos are neither downloaded nor edited: their reuse licence has not been verified, and exact shot boundaries are not visually verified. Original source links remain visible if embedding is unavailable. Players load only after a visitor clicks Play and stop when the film section leaves the viewport or another scene is selected.
-
-The bridge chapter uses the user-provided 12-second Samuel Beckett Bridge video by Luciann Photography, Pexels asset 4003029. Source: https://www.pexels.com/video/drone-footage-of-samuel-beckett-bridge-4003029/ . Licence: https://www.pexels.com/license/ . Resized to 1280px, compressed, audio omitted. No endorsement is implied. The local bridge film can be scrubbed by scrolling or the labelled slider, or played manually. Reduced motion and Motion off use manual controls with no extended scroll section.
-
-This is a hybrid foreground-video edition, not a completed continuous Spire-to-DCU scroll film. Creating that exact experience still requires appropriately licensed downloadable footage for those two locations.
