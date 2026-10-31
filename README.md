@@ -45,3 +45,10 @@ The Liffey-inspired chapter route links introduction, experience, DCU, projects 
 `app.js` updates decorative scene state and small parallax offsets through requestAnimationFrame, using a passive scroll listener. The navigation remains native anchor scrolling with no scroll interception. Reduced-motion preferences and the visible Motion control disable decorative movement. Mobile breakpoints simplify the composition. Theme switching changes the blue-hour sky to a daylight palette.
 
 Artwork: `assets/dublin/`. Interface additions and overrides appear in the Dublin edition block of `style.css`.
+
+
+## Dublin Studio edition
+
+Original visual redesign informed by https://netflix-portfolio-kohl-beta.vercel.app/ : oversized typography, a framed portrait, episode-style sections and project posters. Its code, claims, images and personal content are not copied. Arham’s version uses emerald and copper, his actual portrait, local Dublin-inspired landmark artwork, DCU research and the existing five evidenced projects. No affiliation with Netflix is implied.
+
+No YouTube players, links or videos are included. The footage edition has been removed from the published tree. The hero is immediately usable without a mandatory opening animation or viewer selection. Profiles, theme switching, motion settings, project detail dialogs, career tabs, local paper/CV and contact links remain available.

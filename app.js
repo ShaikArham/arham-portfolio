@@ -24,7 +24,7 @@ $('viewer-button').addEventListener('click',()=>$('profiles-dialog').showModal()
 $('award-open').addEventListener('click',()=>$('image-dialog').showModal());$('award-details').addEventListener('click',()=>$('image-dialog').showModal());$('skip-opening').addEventListener('click',finishOpening);$('replay').addEventListener('click',opening);document.addEventListener('keydown',e=>{if(!$('opening').hidden&&(e.key==='Escape'||e.key==='Enter'))finishOpening();});
 for(const [id,dir] of [['projects-prev',-1],['projects-next',1]])$(id).addEventListener('click',()=>$('project-rail').scrollBy({left:dir*$('project-rail').clientWidth*.7,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'}));
 const theme=stored('arham-series-theme');if(theme==='light')document.body.classList.add('light');function themeIcon(){const light=document.body.classList.contains('light');$('theme-toggle').textContent=light?'☾':'☀';$('theme-toggle').setAttribute('aria-label',light?'Switch to dark theme':'Switch to light theme');}themeIcon();$('theme-toggle').addEventListener('click',()=>{document.body.classList.toggle('light');save('arham-series-theme',document.body.classList.contains('light')?'light':'dark');themeIcon();});
-season('enterprise');const saved=stored('arham-series-profile');selectProfile(profiles[saved]?saved:'data',false);if(!saved&&window.location.hash==='')opening();
+season('enterprise');const saved=stored('arham-series-profile');selectProfile(profiles[saved]?saved:'data',false);
 })();
 
 // Dublin city layers: decorative, frame-limited and disabled for reduced motion.
@@ -42,7 +42,7 @@ function frame(){ticking=false;
  root.style.setProperty('--near-drift',enabled?`${Math.min(150,y*.05)}px`:'0px');
  const chapters=[...document.querySelectorAll('[data-city-scene]')];
  let current=chapters[0];for(const el of chapters){if(el.getBoundingClientRect().top<=window.innerHeight*.5)current=el;}
- const scene=current?.dataset.cityScene||'skyline';if(scene!==lastScene){body.dataset.cityScene=scene;document.getElementById('city-location').textContent=names[scene];lastScene=scene;}
+ const scene=current?.dataset.cityScene||'skyline';if(scene!==lastScene){body.dataset.cityScene=scene;const label=document.getElementById('city-location');if(label)label.textContent=names[scene];lastScene=scene;}
  const stopMap={top:'top',about:'journey',journey:'journey',dcu:'dcu',projects:'projects',skills:'projects',recognition:'projects',contact:'contact'};
  const stop=stopMap[current?.id]||'top';if(stop!==lastStop){document.querySelectorAll('[data-stop]').forEach(a=>{if(a.dataset.stop===stop)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current');});lastStop=stop;}
  const journey=document.getElementById('journey'),r=journey.getBoundingClientRect();root.style.setProperty('--journey-progress',String(Math.max(0,Math.min(1,(window.innerHeight-r.top)/(r.height+window.innerHeight)))));
@@ -53,4 +53,13 @@ toggle.addEventListener('click',()=>{userOff=!userOff;try{sessionStorage.setItem
 preference.addEventListener('change',updateMotion);window.addEventListener('scroll',queue,{passive:true});window.addEventListener('resize',queue,{passive:true});
 new MutationObserver(queue).observe(document.getElementById('story-sections'),{childList:true});
 updateMotion();
+})();
+
+// Progressive reveals keep content visible when scripting or motion is unavailable.
+(()=>{
+ const sections=[...document.querySelectorAll('#story-sections > section')];
+ const reduce=matchMedia('(prefers-reduced-motion: reduce)');
+ if(reduce.matches)return;
+ const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('studio-visible');observer.unobserve(entry.target);}}),{threshold:.08});
+ sections.forEach(section=>{section.classList.add('studio-reveal');observer.observe(section);});
 })();
