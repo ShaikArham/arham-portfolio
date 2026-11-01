@@ -10716,7 +10716,7 @@ function ch() {
           W.name
         ] })
       ] }),
-      /* @__PURE__ */ J.jsx("a", { className: "scroll-invitation", href: "#projects", children: "Scroll to the evidence ↓" })
+      /* @__PURE__ */ J.jsx("a", { className: "scroll-invitation", href: "#evidence", children: "Scroll to the evidence ↓" })
     ] })
   ] });
 }
