@@ -1,12 +1,11 @@
 import React,{useEffect,useRef,useState} from 'react';
 import{createRoot}from'react-dom/client';
 import './carousel.css';
-const VIDEO='assets/hero-motion.mp4';
 const POSES=[
- {src:'assets/arham-welcome.webp',alt:'Arham’s animated character welcoming visitors with an open hand'},
- {src:'assets/arham-build.webp',alt:'Arham’s animated character working on a laptop'},
- {src:'assets/arham-explain.webp',alt:'Arham’s animated character explaining an idea with a raised finger and notebook'},
- {src:'assets/arham-wave.webp',alt:'Arham’s animated character waving hello'},
+ {src:'assets/arham-welcome.webp?v=mobile5',alt:'Arham’s animated character welcoming visitors with an open hand'},
+ {src:'assets/arham-build.webp?v=mobile5',alt:'Arham’s animated character working on a laptop'},
+ {src:'assets/arham-explain.webp?v=mobile5',alt:'Arham’s animated character explaining an idea with a raised finger and notebook'},
+ {src:'assets/arham-wave.webp?v=mobile5',alt:'Arham’s animated character waving hello'},
 ];
 const CHAPTERS=[
  {name:'The introduction',word:'DATA',label:'Hi, I’m Arham. Based in Dublin.',title:'Complex data. Clear decisions.',text:'I investigate reporting problems, connect enterprise systems and make analysis explainable. What can I help your team solve?',link:'#journey',cta:'Explore my experience',bg:'#e9ebff'},
@@ -17,15 +16,13 @@ const CHAPTERS=[
 export function useTypewriter(text:string,speed=38,startDelay=600){const[displayed,setDisplayed]=useState('');useEffect(()=>{setDisplayed('');if(matchMedia('(prefers-reduced-motion: reduce)').matches){setDisplayed(text);return;}let interval:ReturnType<typeof setInterval>;const timeout=setTimeout(()=>{let i=0;interval=setInterval(()=>{i++;setDisplayed(text.slice(0,i));if(i>=text.length)clearInterval(interval);},speed);},startDelay);return()=>{clearTimeout(timeout);clearInterval(interval);};},[text,speed,startDelay]);return{displayed,done:displayed===text};}
 function Hero(){
  const[index,setIndex]=useState(0),[ready,setReady]=useState(false),[copyStatus,setCopyStatus]=useState('');
- const hero=useRef<HTMLElement>(null),video=useRef<HTMLVideoElement>(null),lock=useRef(false),timer=useRef<ReturnType<typeof setTimeout>|null>(null),touch=useRef<{x:number;y:number}|null>(null),target=useRef(0);
+ const hero=useRef<HTMLElement>(null),lock=useRef(false),timer=useRef<ReturnType<typeof setTimeout>|null>(null),touch=useRef<{x:number;y:number}|null>(null);
  const chapter=CHAPTERS[index];const{displayed,done}=useTypewriter(chapter.text,27,350);
  const navigate=(direction:number)=>{if(lock.current)return;lock.current=true;setIndex(i=>(i+direction+4)%4);timer.current=setTimeout(()=>lock.current=false,650);};
  useEffect(()=>{const t=setTimeout(()=>setReady(true),400);POSES.forEach(p=>{const img=new Image();img.src=p.src;});return()=>{clearTimeout(t);if(timer.current)clearTimeout(timer.current);};},[]);
- const seek=()=>{const v=video.current;if(v&&Number.isFinite(v.duration)&&!v.seeking&&Math.abs(v.currentTime-target.current)>.035)v.currentTime=target.current;};
- useEffect(()=>{let prevX:number|null=null;const move=(e:MouseEvent)=>{if(matchMedia('(prefers-reduced-motion: reduce)').matches||document.body.classList.contains('motion-off'))return;const box=hero.current?.getBoundingClientRect();if(!box||box.bottom<0||box.top>innerHeight)return;hero.current?.style.setProperty('--pointer-x',String((e.clientX/innerWidth-.5)*18)+'px');const v=video.current;if(v&&Number.isFinite(v.duration)){if(prevX!==null){target.current=Math.max(0,Math.min(v.duration-.04,target.current+(e.clientX-prevX)/innerWidth*.8*v.duration));seek();}}prevX=e.clientX;};window.addEventListener('mousemove',move,{passive:true});return()=>window.removeEventListener('mousemove',move);},[]);
+ useEffect(()=>{const move=(e:MouseEvent)=>{if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;hero.current?.style.setProperty('--pointer-x',String((e.clientX/innerWidth-.5)*18)+'px');};window.addEventListener('mousemove',move,{passive:true});return()=>window.removeEventListener('mousemove',move);},[]);
  return <section ref={hero} className={`mainframe-hero relative w-full overflow-hidden scene-${index}`} style={{backgroundColor:chapter.bg}} aria-label="Arham’s portfolio introduction" tabIndex={0} onKeyDown={e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();navigate(e.key==='ArrowRight'?1:-1);}}} onTouchStart={e=>{touch.current={x:e.touches[0].clientX,y:e.touches[0].clientY};}} onTouchEnd={e=>{if(!touch.current)return;const dx=e.changedTouches[0].clientX-touch.current.x,dy=e.changedTouches[0].clientY-touch.current.y;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.4)navigate(dx<0?1:-1);touch.current=null;}}>
- <video ref={video} className="mainframe-video" muted playsInline preload="metadata" src={VIDEO} onSeeked={seek} aria-hidden="true" tabIndex={-1}/>
- <div className="mainframe-shade" aria-hidden="true"/><div className="future-orbit" aria-hidden="true"><span>✳</span></div><div className="future-grid" aria-hidden="true"/>
+ <div className="mainframe-shade" aria-hidden="true"/><div className="future-orbit" aria-hidden="true"></div><div className="future-grid" aria-hidden="true"/>
  <div className="mainframe-ghost" aria-hidden="true">{chapter.word}</div>
  {POSES.map((pose,i)=><img key={pose.src} className={`mainframe-avatar ${i===index?'pose-active':'pose-hidden'}`} src={pose.src} alt={i===index?pose.alt:''} aria-hidden={i!==index} width="900" height="1100" draggable={false}/>)}
  <div className="mainframe-copy"><p className="mainframe-label">{chapter.label}</p><h1 id="hero-title">{chapter.title}</h1><p className="mainframe-typewriter" aria-label={chapter.text}><span aria-hidden="true">{displayed}{!done&&<i className="typing-cursor"/>}</span></p>
