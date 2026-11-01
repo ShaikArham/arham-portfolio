@@ -20,3 +20,5 @@
 @media(max-width:640px) and (prefers-reduced-motion:reduce){.mainframe-copy{transform:none}}
 
 .chapter-dots button span{min-width:0;display:block}.chapter-controls>.chapter-dots{flex-shrink:0}.chapter-controls>span{min-width:0}
+
+.chapter-controls{background:#ffffffd9;border:1px solid #fff;border-radius:30px;padding:5px 13px;backdrop-filter:blur(14px);box-shadow:0 6px 22px #7670a810}.scroll-invitation{background:#ffffffd9;padding:9px 13px;border-radius:22px}@media(max-width:640px){.chapter-controls{padding:7px 18px}}
