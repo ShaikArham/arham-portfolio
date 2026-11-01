@@ -1,7 +1,7 @@
 import React,{useEffect,useRef,useState} from 'react';
 import{createRoot}from'react-dom/client';
 import './carousel.css';
-const VIDEO='https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260826_041744_63efcd78-bf7d-4039-99e2-2461e8a61903.mp4';
+const VIDEO='assets/hero-motion.mp4';
 const CHAPTERS=[
  {name:'The introduction',word:'DATA',label:'Hi, I’m Arham. Based in Dublin.',title:'Complex data. Clear decisions.',text:'I investigate reporting problems, connect enterprise systems and make analysis explainable. What can I help your team solve?',link:'#journey',cta:'Explore my experience',bg:'#842b39'},
  {name:'The projects',word:'BUILD',label:'Working ideas. Visible evidence.',title:'Open the work. See the thinking.',text:'Five projects. Different problems. Explore working demos, readable methods and the evidence behind each one.',link:'#projects',cta:'Explore the projects',bg:'#234b51'},
