@@ -133,9 +133,11 @@ def event():
               "contact_click": "Clicked email", "contact_submit": "Submitted contact form"}
     rows = []
     plain = []
+    summary_counts = {}
     for i, item in enumerate(events, 1):
         action = labels.get(item["type"], item["type"].replace("_", " ").title())
         detail = item["detail"] or "No details"
+        summary_counts[action] = summary_counts.get(action, 0) + 1
         plain.append(f'{i}. +{item["seconds"]}s | {action} | {detail} | {item["section"]}')
         rows.append(f'<tr><td style="padding:12px;border-bottom:1px solid #e5e7eb;color:#64748b">+{item["seconds"]}s</td>'
                     f'<td style="padding:12px;border-bottom:1px solid #e5e7eb"><strong>{esc(action)}</strong><br>'
@@ -144,11 +146,14 @@ def event():
                 ("Operating system", os_name), ("Session length", f'{duration} seconds'),
                 ("Reported at", local_time), ("Session", session)]
     meta_html = "".join(f'<tr><td style="padding:7px 12px;color:#64748b">{esc(k)}</td><td style="padding:7px 12px">{esc(v)}</td></tr>' for k, v in metadata)
+    overview = " · ".join(f"{count} {action.lower()}" for action, count in summary_counts.items())
+    overview_html = esc(overview)
     html_body = ('<div style="font-family:Arial,sans-serif;max-width:660px;margin:auto;color:#0f172a">'
                  '<div style="background:#0f172a;color:white;padding:24px;border-radius:12px 12px 0 0">'
                  '<div style="font-size:12px;letter-spacing:2px;color:#a5b4fc">ARHAM PORTFOLIO</div>'
                  '<h2 style="margin:10px 0 0">Visitor activity summary</h2></div>'
                  '<div style="padding:24px;border:1px solid #e5e7eb;border-radius:0 0 12px 12px">'
+                 f'<p style="font-size:16px;font-weight:bold;color:#334155">{overview_html}</p>'
                  f'<p style="color:#475569">{len(events)} recorded interaction(s) in one browser tab. '
                  'This is client-reported activity, not proof of reading or unique identity.</p>'
                  f'<table style="border-collapse:collapse;width:100%">{meta_html}</table>'
