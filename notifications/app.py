@@ -82,9 +82,8 @@ def event():
     section = data.get("section", "")
     if not isinstance(session, str) or not re.fullmatch(r"[a-f0-9]{12}", session):
         return jsonify(error="invalid session"), 400
-    if event_name == "session_summary" and isinstance(detail, str):
-        detail = detail[:1800]
-        if not re.fullmatch(r"[a-zA-Z0-9 _.,:/#()&+\\-\\n]{0,1800}", detail):
+    if event_name == "session_summary":
+        if not isinstance(detail, str) or len(detail) > 1800 or not re.fullmatch(r"[a-zA-Z0-9 _.,:/#()&+|\\-]{0,1800}", detail):
             return jsonify(error="invalid summary"), 400
     elif not isinstance(detail, str) or not SAFE.fullmatch(detail):
         return jsonify(error="invalid detail"), 400
@@ -107,7 +106,7 @@ def event():
     lines = [
         "Portfolio activity (client-reported)",
         "Action: " + event_name.replace("_", " ").title(),
-        "Activity timeline:\\n" + (detail or "Not specified") if event_name == "session_summary" else "Detail: " + (detail or "Not specified"),
+        "Activity timeline:\\n" + (detail.replace(" | ", "\\n") or "Not specified") if event_name == "session_summary" else "Detail: " + (detail or "Not specified"),
         "Section: " + (section or "Not specified"),
         "Session: " + session,
         "Origin: " + origin,
