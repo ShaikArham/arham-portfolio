@@ -1,4 +1,4 @@
-import os, time, threading, re
+import os, time, threading, re, ipaddress
 from collections import defaultdict, deque
 from datetime import datetime, timezone
 from flask import Flask, request, jsonify
@@ -12,8 +12,44 @@ FROM = os.getenv("RESEND_FROM", "Portfolio Notifications <onboarding@resend.dev>
 ALLOWED = set(filter(None, os.getenv("ALLOWED_ORIGINS", "").split(",")))
 EVENTS = {"page_view", "section_view", "project_open", "external_project_click", "cv_view", "recognition_open", "certificate_view", "video_open", "video_chapter", "contact_click", "contact_form_submit", "linkedin_click"}
 hits = defaultdict(deque)
+geo_cache = {}
 lock = threading.Lock()
 SAFE = re.compile(r"^[a-zA-Z0-9 _.,:/#()&+\-]{0,90}$")
+
+def visitor_device(ua):
+    u = ua.lower()
+    browser = ("Edge" if "edg/" in u else "Opera" if "opr/" in u else
+               "Firefox" if "firefox/" in u or "fxios/" in u else
+               "Chrome" if "chrome/" in u or "crios/" in u else
+               "Safari" if "safari/" in u else "Unknown")
+    os_name = ("Android" if "android" in u else "iOS" if "iphone" in u or "ipad" in u else
+               "Windows" if "windows" in u else "macOS" if "mac os" in u else
+               "Linux" if "linux" in u else "Unknown")
+    device = ("Tablet" if "ipad" in u or "tablet" in u else
+              "Mobile" if "mobile" in u or "iphone" in u or "android" in u and "mobile" in u else "Desktop / other")
+    return browser, os_name, device
+
+def approximate_location(ip):
+    try:
+        address = ipaddress.ip_address(ip)
+        if not address.is_global:
+            return "Unknown"
+        with lock:
+            cached = geo_cache.get(ip)
+            if cached and time.monotonic() - cached[0] < 86400:
+                return cached[1]
+        # Geo lookup is approximate and may identify a VPN, proxy, or ISP.
+        response = requests.get("https://ipwho.is/" + str(address), timeout=2)
+        data = response.json() if response.ok else {}
+        location = ", ".join(filter(None, [data.get("city"), data.get("country")])) if data.get("success") else "Unknown"
+        location = location[:100] or "Unknown"
+        with lock:
+            if len(geo_cache) > 1000:
+                geo_cache.clear()
+            geo_cache[ip] = (time.monotonic(), location)
+        return location
+    except (ValueError, requests.RequestException, TypeError):
+        return "Unknown"
 
 @app.after_request
 def cors(response):
@@ -62,6 +98,8 @@ def event():
         q.append(now)
     if not EMAIL or not API_KEY:
         return jsonify(error="email not configured"), 503
+    browser, operating_system, device = visitor_device(request.headers.get("User-Agent", ""))
+    location = approximate_location(ip)
     lines = [
         "Portfolio activity (client-reported)",
         "Action: " + event_name.replace("_", " ").title(),
@@ -69,9 +107,14 @@ def event():
         "Section: " + (section or "Not specified"),
         "Session: " + session,
         "Origin: " + origin,
+        "Approximate location: " + location,
+        "Browser: " + browser,
+        "Operating system: " + operating_system,
+        "Device: " + device,
         "Time (UTC): " + datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC"),
         "",
         "Session ID is temporary and anonymous; it groups activity from one open browser tab.",
+        "Location is an IP-based estimate, not GPS. Browser/device are inferred from user-agent.",
         "Events are not proof of unique visitors, attention, or successful PDF reading."
     ]
     payload = {
