@@ -1,5 +1,45 @@
 # Arham · The Data Series
 
+**Primary website:** https://arham-bi.vercel.app/  
+**GitHub Pages mirror:** https://shaikarham.github.io/arham-portfolio/  
+**Source:** https://github.com/ShaikArham/arham-portfolio
+
+## Current production release (November 2026)
+
+This repository is the source for the professional portfolio of Shaik Arham Saquib. The production Vercel project is `arham-portfolio` and its primary domain is `arham-bi.vercel.app`. The website is a static HTML/CSS/JavaScript experience, built using `npm run build` into `dist/`.
+
+### Current portfolio assets
+
+- **Current CV:** [View PDF](assets/Shaik_Arham_Saquib.pdf). The site's View CV links open this file in a new tab.
+- **Tines Academy 3B Fundamentals:** [Original certificate image](assets/tines-3b-fundamentals.png).
+- **Tines Academy Monitor and Govern:** [Original certificate image](assets/tines-monitor-govern.png).
+- Both certificate images appear in the Recognition carousel; the source images are retained without reconstruction.
+- Projects, experience, DCU research, contact form, responsive navigation and accessibility controls remain in the site.
+
+### Visitor activity notifications
+
+The client-side tracker is `assets/portfolio-notifications.js`; the backend is `notifications/app.py`, hosted on Render. It sends email through Resend to the configured notification inbox. **No Resend API key is stored in this repository.**
+
+- Only meaningful clicks/interactions are reported: project details, certificate carousel selections, intro controls, CV link, external links, LinkedIn and email/contact form actions.
+- Passive scrolling and merely opening the website do **not** trigger an email.
+- A tab visit attempts one consolidated HTML email with a chronological, relative-time activity timeline and named clicked items when detectable.
+- Device, browser and OS are inferred from browser information. City/country are approximate IP-based estimates and can be unavailable, particularly with VPNs, proxies and privacy protections.
+- Interactions are client-reported and cannot prove that someone read a PDF, watched a full video or represents a unique visitor.
+- The backend deduplicates session IDs in process memory. This is best-effort rather than a durable, cross-instance guarantee.
+- The email provider's acceptance does not guarantee inbox delivery. The test workflow `.github/workflows/portfolio-notification-smoke.yml` checks API acceptance, and should not be confused with a complete real-browser QA run.
+- The notification endpoint must remain permitted by the Vercel Content Security Policy in `vercel.json`, and the Vercel domain must be in the Render backend's `ALLOWED_ORIGINS`.
+
+### Build and deployment
+
+```bash
+npm ci
+npm run build
+```
+
+The static site is deployed from `main` to Vercel production, with GitHub Pages as a separate mirror. Verify the production deployment's `READY` status and check CV/certificate asset URLs and notification behavior after changes. Vercel and GitHub Pages may deploy on different schedules.
+
+---
+
 Shaik Arham Saquib's cinematic portfolio for business intelligence, data analytics, reporting and application support opportunities in Dublin and Ireland.
 
 A static HTML/CSS/JavaScript site, hosted at https://shaikarham.github.io/arham-portfolio/.
