@@ -1,55 +1,66 @@
-import os, time, threading, re, ipaddress
+import html
+import ipaddress
+import os
+import re
+import threading
+import time
 from collections import defaultdict, deque
-from datetime import datetime, timezone
-from flask import Flask, request, jsonify
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
 import requests
+from flask import Flask, jsonify, request
 
 app = Flask(__name__)
-app.config["MAX_CONTENT_LENGTH"] = 4096
+app.config["MAX_CONTENT_LENGTH"] = 8192
 EMAIL = os.getenv("NOTIFY_TO", "")
 API_KEY = os.getenv("RESEND_API_KEY", "")
 FROM = os.getenv("RESEND_FROM", "Portfolio Notifications <onboarding@resend.dev>")
 ALLOWED = set(filter(None, os.getenv("ALLOWED_ORIGINS", "").split(",")))
-EVENTS = {"session_summary", "page_view", "section_view", "project_open", "external_project_click", "cv_view", "recognition_open", "certificate_view", "video_open", "video_chapter", "contact_click", "contact_form_submit", "linkedin_click"}
-hits = defaultdict(deque)
-geo_cache = {}
 lock = threading.Lock()
-SAFE = re.compile(r"^[a-zA-Z0-9 _.,:/#()&+\-]{0,90}$")
+hits = defaultdict(deque)
+sent_sessions = {}
+SAFE = re.compile(r"^[a-zA-Z0-9 _.,:/#()&+\\-]{0,100}$")
 
-def visitor_device(ua):
+def device_info(ua, mobile_hint=False):
     u = ua.lower()
-    browser = ("Edge" if "edg/" in u else "Opera" if "opr/" in u else
+    browser = ("Edge" if "edg/" in u or "edgios/" in u else
+               "Opera" if "opr/" in u or "opios/" in u else
                "Firefox" if "firefox/" in u or "fxios/" in u else
                "Chrome" if "chrome/" in u or "crios/" in u else
                "Safari" if "safari/" in u else "Unknown")
     os_name = ("Android" if "android" in u else "iOS" if "iphone" in u or "ipad" in u else
-               "Windows" if "windows" in u else "macOS" if "mac os" in u else
+               "Windows" if "windows" in u else "macOS" if "mac os" in u or "macintosh" in u else
                "Linux" if "linux" in u else "Unknown")
     device = ("Tablet" if "ipad" in u or "tablet" in u else
-              "Mobile" if "mobile" in u or "iphone" in u or "android" in u and "mobile" in u else "Desktop / other")
+              "Mobile" if mobile_hint or "iphone" in u or "mobile" in u else
+              "Desktop / other" if any(x in u for x in ("windows", "macintosh", "linux", "x11")) else "Unknown")
     return browser, os_name, device
 
-def approximate_location(ip):
+def public_ip():
+    # Render's proxy sets X-Forwarded-For. Only use it on Render, not arbitrary hosts.
+    value = request.headers.get("X-Forwarded-For", "") if os.getenv("RENDER") else ""
+    candidate = value.split(",")[0].strip() if value else request.remote_addr
     try:
-        address = ipaddress.ip_address(ip)
-        if not address.is_global:
-            return "Unknown"
-        with lock:
-            cached = geo_cache.get(ip)
-            if cached and time.monotonic() - cached[0] < 86400:
-                return cached[1]
-        # Geo lookup is approximate and may identify a VPN, proxy, or ISP.
-        response = requests.get("https://ipwho.is/" + str(address), timeout=2)
+        address = ipaddress.ip_address(candidate)
+        return str(address) if address.is_global else None
+    except ValueError:
+        return None
+
+def approximate_location(ip):
+    if not ip:
+        return "Unavailable"
+    try:
+        response = requests.get("https://ipwho.is/" + ip, timeout=2)
         data = response.json() if response.ok else {}
-        location = ", ".join(filter(None, [data.get("city"), data.get("country")])) if data.get("success") else "Unknown"
-        location = location[:100] or "Unknown"
-        with lock:
-            if len(geo_cache) > 1000:
-                geo_cache.clear()
-            geo_cache[ip] = (time.monotonic(), location)
-        return location
-    except (ValueError, requests.RequestException, TypeError):
-        return "Unknown"
+        if data.get("success"):
+            return ", ".join(filter(None, (data.get("city"), data.get("country"))))[:100] or "Unavailable"
+    except (requests.RequestException, ValueError, TypeError):
+        pass
+    return "Unavailable"
+
+def esc(value):
+    return html.escape(str(value), quote=True)
 
 @app.after_request
 def cors(response):
@@ -74,62 +85,92 @@ def event():
     if request.method == "OPTIONS":
         return "", 204
     data = request.get_json(silent=True)
-    if not isinstance(data, dict) or data.get("event") not in EVENTS:
-        return jsonify(error="invalid event"), 400
-    event_name = data["event"]
-    session = data.get("session", "")
-    detail = data.get("detail", "")
-    section = data.get("section", "")
+    if not isinstance(data, dict) or data.get("event") != "session_summary":
+        return jsonify(error="unsupported event"), 400
+    session = data.get("session")
+    events = data.get("events")
     if not isinstance(session, str) or not re.fullmatch(r"[a-f0-9]{12}", session):
         return jsonify(error="invalid session"), 400
-    if event_name == "session_summary":
-        if not isinstance(detail, str) or len(detail) > 1800 or not re.fullmatch(r"[a-zA-Z0-9 _.,:/#()&+|\\-]{0,1800}", detail):
-            return jsonify(error="invalid summary"), 400
-    elif not isinstance(detail, str) or not SAFE.fullmatch(detail):
-        return jsonify(error="invalid detail"), 400
-    if not isinstance(section, str) or not SAFE.fullmatch(section):
-        return jsonify(error="invalid section"), 400
-    # IP used in memory for rate limiting only, never stored or sent by email.
-    ip = request.remote_addr or "unknown"
+    if not isinstance(events, list) or not 1 <= len(events) <= 30:
+        return jsonify(error="invalid activity"), 400
+    for item in events:
+        if not isinstance(item, dict) or any(not isinstance(item.get(k), str) or not SAFE.fullmatch(item[k]) for k in ("type", "detail", "section")):
+            return jsonify(error="invalid activity detail"), 400
+        if not isinstance(item.get("seconds"), int) or not 0 <= item["seconds"] <= 86400:
+            return jsonify(error="invalid event time"), 400
+    duration = data.get("duration_seconds", 0)
+    if not isinstance(duration, int) or not 0 <= duration <= 86400:
+        return jsonify(error="invalid duration"), 400
+    browser_info = data.get("browser_info") or {}
+    if not isinstance(browser_info, dict):
+        return jsonify(error="invalid browser info"), 400
+    ua = browser_info.get("user_agent", "")
+    if not isinstance(ua, str) or len(ua) > 300:
+        return jsonify(error="invalid user agent"), 400
+    ua = ua or request.headers.get("User-Agent", "")
+    browser, os_name, device = device_info(ua, browser_info.get("mobile") is True)
+    ip = public_ip()
     now = time.monotonic()
     with lock:
-        q = hits[ip]
+        for key in list(sent_sessions):
+            if now - sent_sessions[key] > 86400:
+                del sent_sessions[key]
+        if session in sent_sessions:
+            return jsonify(status="already_reported"), 200
+        q = hits[ip or "unknown"]
         while q and now - q[0] > 3600:
             q.popleft()
-        if len(q) >= 100:
+        if len(q) >= 30:
             return jsonify(error="rate limited"), 429
         q.append(now)
     if not EMAIL or not API_KEY:
         return jsonify(error="email not configured"), 503
-    browser, operating_system, device = visitor_device(request.headers.get("User-Agent", ""))
     location = approximate_location(ip)
-    lines = [
-        "Portfolio activity (client-reported)",
-        "Action: " + event_name.replace("_", " ").title(),
-        "Activity timeline:\\n" + (detail.replace(" | ", "\\n") or "Not specified") if event_name == "session_summary" else "Detail: " + (detail or "Not specified"),
-        "Section: " + (section or "Not specified"),
-        "Session: " + session,
-        "Origin: " + origin,
-        "Approximate location: " + location,
-        "Browser: " + browser,
-        "Operating system: " + operating_system,
-        "Device: " + device,
-        "Time (UTC): " + datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC"),
-        "",
-        "Session ID is temporary and anonymous; it groups activity from one open browser tab.",
-        "Location is an IP-based estimate, not GPS. Browser/device are inferred from user-agent.",
-        "Events are not proof of unique visitors, attention, or successful PDF reading."
-    ]
-    payload = {
-        "from": FROM, "to": [EMAIL],
-        "subject": "PORTFOLIO | Visitor activity summary" if event_name == "session_summary" else "PORTFOLIO | " + event_name.replace("_", " ").title() + (" | " + detail[:40] if detail else ""),
-        "text": "\n".join(lines)
-    }
+    local_time = datetime.now(ZoneInfo("Europe/Dublin")).strftime("%d %b %Y, %H:%M %Z")
+    labels = {"cv_view": "Viewed CV link", "project_interaction": "Explored project",
+              "certificate_interaction": "Explored certificates", "video_interaction": "Interacted with intro video",
+              "external_link": "Opened external link", "linkedin_click": "Opened LinkedIn",
+              "contact_click": "Clicked email", "contact_submit": "Submitted contact form"}
+    rows = []
+    plain = []
+    for i, item in enumerate(events, 1):
+        action = labels.get(item["type"], item["type"].replace("_", " ").title())
+        detail = item["detail"] or "No details"
+        plain.append(f'{i}. +{item["seconds"]}s | {action} | {detail} | {item["section"]}')
+        rows.append(f'<tr><td style="padding:12px;border-bottom:1px solid #e5e7eb;color:#64748b">+{item["seconds"]}s</td>'
+                    f'<td style="padding:12px;border-bottom:1px solid #e5e7eb"><strong>{esc(action)}</strong><br>'
+                    f'<span style="color:#64748b">{esc(detail)} · {esc(item["section"])}</span></td></tr>')
+    metadata = [("Approx. location", location), ("Browser", browser), ("Device", device),
+                ("Operating system", os_name), ("Session length", f'{duration} seconds'),
+                ("Reported at", local_time), ("Session", session)]
+    meta_html = "".join(f'<tr><td style="padding:7px 12px;color:#64748b">{esc(k)}</td><td style="padding:7px 12px">{esc(v)}</td></tr>' for k, v in metadata)
+    html_body = ('<div style="font-family:Arial,sans-serif;max-width:660px;margin:auto;color:#0f172a">'
+                 '<div style="background:#0f172a;color:white;padding:24px;border-radius:12px 12px 0 0">'
+                 '<div style="font-size:12px;letter-spacing:2px;color:#a5b4fc">ARHAM PORTFOLIO</div>'
+                 '<h2 style="margin:10px 0 0">Visitor activity summary</h2></div>'
+                 '<div style="padding:24px;border:1px solid #e5e7eb;border-radius:0 0 12px 12px">'
+                 f'<p style="color:#475569">{len(events)} recorded interaction(s) in one browser tab. '
+                 'This is client-reported activity, not proof of reading or unique identity.</p>'
+                 f'<table style="border-collapse:collapse;width:100%">{meta_html}</table>'
+                 '<h3 style="margin-top:28px">Activity timeline</h3>'
+                 f'<table style="border-collapse:collapse;width:100%">{ "".join(rows) }</table>'
+                 '<p style="font-size:12px;color:#64748b;margin-top:24px">Location is an approximate IP-based estimate '
+                 'and may be unavailable or inaccurate. Browser and device are inferred. No GPS or visitor identity is collected.</p>'
+                 '</div></div>')
+    text_body = ("PORTFOLIO VISITOR ACTIVITY\n\n" +
+                 "\n".join(f"{k}: {v}" for k, v in metadata) +
+                 "\n\nACTIVITY TIMELINE\n" + "\n".join(plain) +
+                 "\n\nClient-reported interactions; location and device estimates may be inaccurate.")
+    payload = {"from": FROM, "to": [EMAIL], "subject": f"PORTFOLIO | {len(events)} interactions | {device}",
+               "html": html_body, "text": text_body}
     try:
-        r = requests.post("https://api.resend.com/emails", headers={"Authorization": "Bearer " + API_KEY}, json=payload, timeout=8)
-        if r.status_code not in (200, 201):
-            app.logger.warning("Resend rejected notification: status=%s", r.status_code)
+        response = requests.post("https://api.resend.com/emails",
+                                 headers={"Authorization": "Bearer " + API_KEY}, json=payload, timeout=10)
+        if response.status_code not in (200, 201):
+            app.logger.warning("Resend rejected activity summary: status=%s", response.status_code)
             return jsonify(error="delivery provider rejected request"), 502
     except requests.RequestException:
         return jsonify(error="delivery provider unavailable"), 502
+    with lock:
+        sent_sessions[session] = now
     return jsonify(status="accepted"), 202
