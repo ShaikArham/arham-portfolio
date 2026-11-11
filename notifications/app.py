@@ -142,7 +142,7 @@ def event():
         rows.append(f'<tr><td style="padding:12px;border-bottom:1px solid #e5e7eb;color:#64748b">+{item["seconds"]}s</td>'
                     f'<td style="padding:12px;border-bottom:1px solid #e5e7eb"><strong>{esc(action)}</strong><br>'
                     f'<span style="color:#64748b">{esc(detail)} · {esc(item["section"])}</span></td></tr>')
-    metadata = [("Approx. location", location), ("Browser", browser), ("Device", device),
+    metadata = [("IP network location (unverified)", location), ("Browser", browser), ("Device", device),
                 ("Operating system", os_name), ("Session length", f'{duration} seconds'),
                 ("Reported at", local_time), ("Session", session)]
     meta_html = "".join(f'<tr><td style="padding:7px 12px;color:#64748b">{esc(k)}</td><td style="padding:7px 12px">{esc(v)}</td></tr>' for k, v in metadata)
@@ -159,13 +159,13 @@ def event():
                  f'<table style="border-collapse:collapse;width:100%">{meta_html}</table>'
                  '<h3 style="margin-top:28px">Activity timeline</h3>'
                  f'<table style="border-collapse:collapse;width:100%">{ "".join(rows) }</table>'
-                 '<p style="font-size:12px;color:#64748b;margin-top:24px">Location is an approximate IP-based estimate '
-                 'and may be unavailable or inaccurate. Browser and device are inferred. No GPS or visitor identity is collected.</p>'
+                 '<p style="font-size:12px;color:#64748b;margin-top:24px">IP geolocation may reflect your ISP or VPN exit, not the visitor location. It '
+                 'can be unavailable or inaccurate. Browser and device are inferred. No GPS or visitor identity is collected.</p>'
                  '</div></div>')
     text_body = ("PORTFOLIO VISITOR ACTIVITY\n\n" +
                  "\n".join(f"{k}: {v}" for k, v in metadata) +
                  "\n\nACTIVITY TIMELINE\n" + "\n".join(plain) +
-                 "\n\nClient-reported interactions; location and device estimates may be inaccurate.")
+                 "\n\nClient-reported interactions; IP network city may differ from the actual visitor city; device estimates may be inaccurate.")
     payload = {"from": FROM, "to": [EMAIL], "subject": f"PORTFOLIO | {len(events)} interactions | {device}",
                "html": html_body, "text": text_body}
     try:
