@@ -1,155 +1,185 @@
-# Arham · The Data Series
+<div align="center">
 
-**Primary website:** https://arham-bi.vercel.app/  
-**GitHub Pages mirror:** https://shaikarham.github.io/arham-portfolio/  
-**Source:** https://github.com/ShaikArham/arham-portfolio
+# ARHAM / THE DATA SERIES
 
-## Current production release (November 2026)
+### Investigate the signal. Explain the evidence. Deliver the next step.
 
-This repository is the source for the professional portfolio of Shaik Arham Saquib. The production Vercel project is `arham-portfolio` and its primary domain is `arham-bi.vercel.app`. The website is a static HTML/CSS/JavaScript experience, built using `npm run build` into `dist/`.
+**An interactive portfolio at the intersection of business intelligence, data analytics and enterprise application support.**
 
-### Current portfolio assets
+[**Explore the live experience**](https://arham-bi.vercel.app/) · [**View my CV**](assets/Shaik_Arham_Saquib.pdf) · [**Browse the projects**](#featured-work) · [**Get in touch**](mailto:sarhamsaquib@gmail.com)
 
-- **Current CV:** [View PDF](assets/Shaik_Arham_Saquib.pdf). The site's View CV links open this file in a new tab.
-- **Tines Academy 3B Fundamentals:** [Original certificate image](assets/tines-3b-fundamentals.png).
-- **Tines Academy Monitor and Govern:** [Original certificate image](assets/tines-monitor-govern.png).
-- Both certificate images appear in the Recognition carousel; the source images are retained without reconstruction.
-- Projects, experience, DCU research, contact form, responsive navigation and accessibility controls remain in the site.
+![Status](https://img.shields.io/badge/Portfolio-Live-0b7667?style=flat-square) ![Stack](https://img.shields.io/badge/Frontend-React%20%2B%20TypeScript-1f2937?style=flat-square) ![Deployment](https://img.shields.io/badge/Hosting-Vercel-111827?style=flat-square) ![Research](https://img.shields.io/badge/DCU-MSc%20Data%20Analytics-633c91?style=flat-square)
 
-### Visitor activity notifications
+*Shaik Arham Saquib · Dublin, Ireland*
 
-The client-side tracker is `assets/portfolio-notifications.js`; the backend is `notifications/app.py`, hosted on Render. It sends email through Resend to the configured notification inbox. **No Resend API key is stored in this repository.**
-
-- Only meaningful clicks/interactions are reported: project details, certificate carousel selections, intro controls, CV link, external links, LinkedIn and email/contact form actions.
-- Passive scrolling and merely opening the website do **not** trigger an email.
-- A tab visit attempts one consolidated HTML email with a chronological, relative-time activity timeline and named clicked items when detectable.
-- Device, browser and OS are inferred from browser information. City/country are approximate IP-based estimates and can be unavailable, particularly with VPNs, proxies and privacy protections.
-- Interactions are client-reported and cannot prove that someone read a PDF, watched a full video or represents a unique visitor.
-- The backend deduplicates session IDs in process memory. This is best-effort rather than a durable, cross-instance guarantee.
-- The email provider's acceptance does not guarantee inbox delivery. The test workflow `.github/workflows/portfolio-notification-smoke.yml` checks API acceptance, and should not be confused with a complete real-browser QA run.
-- The notification endpoint must remain permitted by the Vercel Content Security Policy in `vercel.json`, and the Vercel domain must be in the Render backend's `ALLOWED_ORIGINS`.
-
-### Build and deployment
-
-```bash
-npm ci
-npm run build
-```
-
-The static site is deployed from `main` to Vercel production, with GitHub Pages as a separate mirror. Verify the production deployment's `READY` status and check CV/certificate asset URLs and notification behavior after changes. Vercel and GitHub Pages may deploy on different schedules.
+</div>
 
 ---
 
-Shaik Arham Saquib's cinematic portfolio for business intelligence, data analytics, reporting and application support opportunities in Dublin and Ireland.
+## 01 / THE IDEA
 
-A static HTML/CSS/JavaScript site, hosted at https://shaikarham.github.io/arham-portfolio/.
+**This isn't a list of skills. It's an invitation to inspect the work.**
 
-## Run locally
+A hiring manager should be able to move from a claim to its evidence in a few clicks. This portfolio pairs a cinematic, chapter-based interface with case studies that explain the problem, the method, the results and the limits. The goal is to make both the engineering and the judgment visible.
 
-```bash
-python -m http.server 8000
+My background combines **2.5+ years of enterprise BI and application-support experience at Hitachi Digital Services** with an **MSc in Computing (Data Analytics) at Dublin City University**. I'm interested in data/BI analysis, reporting, application support and operational roles where systems need to be reliable and decisions need to be explainable.
+
+> **The principle:** A good dashboard answers a question. A dependable workflow also shows where the answer came from, what could go wrong and what happens next.
+
+## 02 / EXPLORE THE EXPERIENCE
+
+| Chapter | What you'll find |
+| :--- | :--- |
+| **Introduction** | A visual entry point to the person and the work |
+| **Experience** | Enterprise reporting, ERP/application support and operational responsibilities |
+| **DCU research** | Explainable forecasting and LLM-assisted energy scheduling |
+| **Selected work** | Project demos, source code, methodology and evidence |
+| **Recognition** | Awards and original Tines Academy certificate images |
+| **Contact** | CV, professional links and a contact form |
+
+**Start here:** [arham-bi.vercel.app](https://arham-bi.vercel.app/)
+
+The interface uses responsive layouts, interactive project dialogs, themed presentation and reduced-motion support. Visual presentation is part of the experience, but the underlying project descriptions and limitations matter more than animation.
+
+## 03 / FEATURED WORK
+
+### 01 · [OpsResolve AI](https://shaikarham.github.io/opsresolve-ai/)
+**Enterprise application support · Python · Incident analytics · SLA reporting**
+
+A support-investigation workspace built around fictional operational incidents. It connects incident views, SLA analysis and troubleshooting procedures to help make investigations more systematic.
+
+**Evidence:** 200 fictional incidents · 26 troubleshooting procedures · incident, SLA and knowledge views  
+[Live demonstration](https://shaikarham.github.io/opsresolve-ai/) · [Source code](https://github.com/ShaikArham/opsresolve-ai)
+
+### 02 · Explainable Energy
+**DCU MSc practicum · XGBoost · SHAP · LLM-assisted scheduling**
+
+Co-authored research into explainable residential energy forecasting and scheduling. The approach combines an XGBoost forecast, SHAP explanations and a Llama 3 scheduling component.
+
+**Evidence:** Test R² **0.651** in the evaluated research setup · co-authored with Bryan Masterson · supervised by Dr. Muhammad Salman Pathan  
+[Read the practicum paper](assets/Practicum_Paper.pdf)
+
+### 03 · [Customer Lens](https://shaikarham.github.io/customer-segmentation-rfm/site/)
+**Customer analytics · Python · RFM segmentation · Data validation**
+
+A reproducible retail-analysis pipeline that validates transactions, handles refunds in integer cents and produces transparent recency/frequency/monetary segments.
+
+**Evidence:** 3,658 fictional input orders · 569 eligible customers · 12 calculation/reconciliation tests  
+[Live demonstration](https://shaikarham.github.io/customer-segmentation-rfm/site/) · [Source code](https://github.com/ShaikArham/customer-segmentation-rfm)
+
+### 04 · [Workforce Atlas](https://shaikarham.github.io/hr-workforce-analytics/site/)
+**HR analytics · Headcount reconciliation · Workforce reporting**
+
+A reporting case study that makes headcount, turnover and tenure metrics inspectable, with reconciliation between opening employees, hires, exits and closing employees.
+
+**Evidence:** 800 fictional employee records · **536 + 125 − 46 = 615** closing employees · 13 tests  
+[Live demonstration](https://shaikarham.github.io/hr-workforce-analytics/site/) · [Source code](https://github.com/ShaikArham/hr-workforce-analytics)
+
+### 05 · [Report Relay](https://shaikarham.github.io/bi-reporting-automation/site/)
+**BI automation · SQL · SQLite · Quality gates**
+
+A CSV-to-SQLite reporting workflow with quarantined invalid rows, control totals and independent Python reconciliation of SQL reporting outputs. Failed quality checks preserve prior reports.
+
+**Evidence:** 405 fictional input rows · 399 accepted · 6 quarantined · 15 tests  
+[Live demonstration](https://shaikarham.github.io/bi-reporting-automation/site/) · [Source code](https://github.com/ShaikArham/bi-reporting-automation)
+
+<details>
+<summary><strong>Read the evidence boundaries</strong></summary>
+
+The portfolio demos use fictional or synthetic data. They are not connected to Hitachi production systems. Customer Lens is descriptive segmentation, not a causal uplift model. Workforce Atlas does not predict individual attrition. Report Relay is a static snapshot, not a live Oracle integration. OpsResolve suggestions require human review. The energy practicum's measured performance is specific to its experimental setup and does not imply guaranteed household savings.
+
+</details>
+
+## 04 / WHAT I BRING
+
+| Enterprise experience | Research and analytics | How I work |
+| :--- | :--- | :--- |
+| Oracle ERP / BI support, SQL, PL/SQL, reporting and data validation | Python, machine learning, XGBoost, SHAP and reproducible analysis | Investigate incidents, reconcile evidence, document assumptions and communicate next steps |
+| Application and operational troubleshooting | Metric definitions, data quality and analytical reporting | Separate demonstrated results from hypotheses and limitations |
+
+My portfolio is deliberately oriented around **traceability**: inputs, assumptions, checks, outputs and next actions. That approach comes from working with business-critical reporting and support workflows, not just building attractive dashboards.
+
+## 05 / UNDER THE HOOD
+
+```text
+arham-portfolio/
+├── index.html                 # Main chapters and semantic page structure
+├── style.css / mobile.css     # Design system and responsive presentation
+├── app.js                     # Interactive site behavior
+├── portfolio-data.js          # Project evidence and professional timeline
+├── src/                       # React + TypeScript hero/carousel source
+├── carousel-build/            # Compiled client assets
+├── assets/                    # CV, certificates, visuals and supporting media
+│   └── portfolio-notifications.js
+├── notifications/app.py       # Flask activity-summary service
+├── scripts/                   # Build and validation checks
+├── .github/workflows/         # Deployment and notification checks
+└── vercel.json                # Static build and security headers
 ```
 
-Open http://localhost:8000. No dependencies or build step are needed.
+**Frontend:** HTML, CSS, JavaScript, React 19, TypeScript, Vite, Tailwind CSS and Lucide icons.  
+**Delivery:** Static production build on Vercel; GitHub Pages mirror.  
+**Notifications:** Browser-side event collection, Flask on Render and Resend email delivery.
 
-## Update content
+### Run locally
 
-- `portfolio-data.js`: five project descriptions, demo/code links, evidence and career-season content.
-- `index.html`: professional introduction, skills, recognition, education and contact details.
-- `style.css`: responsive streaming-inspired visual design and light/dark themes.
-- `app.js`: profile views, opening sequence, project dialogs, intro chapters, season tabs and theme controls.
-- `assets/`: the existing CV, portrait, certificate, practicum paper and project screenshots.
+```bash
+git clone https://github.com/ShaikArham/arham-portfolio.git
+cd arham-portfolio
+npm ci
+npm run dev
+```
 
-The viewer selector changes section/project ordering, not qualifications or results. Session storage remembers the selected view and theme. There are no analytics, contact-form submissions or backend services.
+For the checked production output:
 
-## Projects and evidence
+```bash
+npm run build
+```
 
-OpsResolve AI and the co-authored DCU energy practicum appear alongside three new October 2026 fictional-data demonstrations: Customer Lens, Workforce Atlas and Report Relay. Demo figures are sample statistics, not commercial improvements. The analytics dashboards do not claim to be Power BI `.pbix` implementations.
+The build performs TypeScript/Vite compilation and the repository's static checks before assembling `dist/`. The Vercel configuration deploys that output directory.
 
-Enterprise role titles and dates are preserved from the previous portfolio. Education is presented without grades. The practicum is credited as co-authored and research limitations are explicit.
+## 06 / VISITOR ACTIVITY, WITH BOUNDARIES
 
-## Accessibility
+The optional visitor-activity system helps me understand **which portfolio material visitors chose to explore**, not who they are.
 
-Native dialogs support Escape and modal focus handling. Buttons have visible keyboard focus states. Reduced-motion preference disables animations and smooth scrolling. The intro is skippable. Core professional information and project links remain available without JavaScript.
+- **Recorded:** Meaningful client-reported clicks such as project details, certificate selections, CV links, introduction controls and external professional links. Activity emails include a relative-time sequence and the clicked labels when available.
+- **Not recorded as proof:** Simply opening the page, passive scrolling, reading the full CV, watching an entire video or identifying a unique person.
+- **Location:** An *unverified public-IP network estimate*. The city may describe an ISP or VPN exit rather than the visitor's real location. No GPS location is requested.
+- **Delivery:** The tracker attempts a consolidated summary per browser-tab visit. Deduplication is best-effort, not guaranteed across multiple server instances. Email acceptance is not the same as confirmed inbox delivery.
+- **Security:** Provider credentials are configured as backend environment variables, not committed to the frontend repository. The Vercel content security policy explicitly permits the notification endpoint.
 
-## Design reference
+The email notification system is **not** a hiring assessment or a source of reliable personal identity.
 
-The cinematic streaming-portfolio concept was requested with [Sushmita Dasari's Portfolio_series](https://github.com/Sushmitadasari/Portfolio_series) as a reference. This implementation is original HTML/CSS/JavaScript and does not reuse that repository's source code, photos or personal content. It is not affiliated with a streaming platform.
+## 07 / DESIGN & ACCESSIBILITY
 
-## Dublin journey edition
+This portfolio is intended to be memorable **without hiding the information**. The experience includes a chapter-based visual language, responsive layouts, keyboard-accessible controls, native dialogs, visible focus states and reduced-motion behavior.
 
-Original SVG artwork provides a composite Dublin skyline (including a Spire silhouette, Georgian streetscape and classical frontage), Ha'penny/Samuel Beckett bridge-inspired crossings, a campus-inspired DCU scene and a Docklands skyline. These are illustrative compositions, not geographic maps or exact campus elevations.
+The Dublin-inspired artwork is illustrative, not a geographical map. The portfolio uses original interface code and does not claim affiliation with Netflix or other referenced visual inspirations.
 
-The Liffey-inspired chapter route links introduction, experience, DCU, projects and contact. The DCU section links directly to the research panel and paper. Viewer profiles retain their emphasis while preserving all sections.
+**Accessibility status:** These are implementation features, not a claim of WCAG certification or a completed screen-reader/device audit.
 
-`app.js` updates decorative scene state and small parallax offsets through requestAnimationFrame, using a passive scroll listener. The navigation remains native anchor scrolling with no scroll interception. Reduced-motion preferences and the visible Motion control disable decorative movement. Mobile breakpoints simplify the composition. Theme switching changes the blue-hour sky to a daylight palette.
+## 08 / RELEASE & MAINTENANCE
 
-Artwork: `assets/dublin/`. Interface additions and overrides appear in the Dublin edition block of `style.css`.
+| Destination | Address | Purpose |
+| :--- | :--- | :--- |
+| **Primary production** | [arham-bi.vercel.app](https://arham-bi.vercel.app/) | Share with hiring managers |
+| GitHub Pages | [Portfolio mirror](https://shaikarham.github.io/arham-portfolio/) | Alternative static host |
+| GitHub | [Source repository](https://github.com/ShaikArham/arham-portfolio) | Review implementation and changes |
 
+**Release checklist:** Build passes; production deployment reaches `READY`; CV PDF and both Tines images load; project dialogs and links function; mobile layout is reviewed; notification emails are checked with clearly identified synthetic tests. A successful deployment alone does not certify end-to-end browser behavior.
 
-## Dublin Studio edition
+**Current supporting documents:** [CV](assets/Shaik_Arham_Saquib.pdf) · [Tines 3B Fundamentals](assets/tines-3b-fundamentals.png) · [Tines Monitor and Govern](assets/tines-monitor-govern.png) · [Research paper](assets/Practicum_Paper.pdf)
 
-Original visual redesign informed by https://netflix-portfolio-kohl-beta.vercel.app/ : oversized typography, a framed portrait, episode-style sections and project posters. Its code, claims, images and personal content are not copied. Arham’s version uses emerald and copper, his actual portrait, local Dublin-inspired landmark artwork, DCU research and the existing five evidenced projects. No affiliation with Netflix is implied.
+---
 
-No YouTube players, links or videos are included. The footage edition has been removed from the published tree. The hero is immediately usable without a mandatory opening animation or viewer selection. Profiles, theme switching, motion settings, project detail dialogs, career tabs, local paper/CV and contact links remain available.
+<div align="center">
 
+### LET'S TALK ABOUT THE WORK.
 
-## Production collection edition
+If you're hiring for **BI / Data Analyst, Reporting Analyst or Application Support** roles in Dublin, I'd welcome a conversation about the problems your team needs to solve.
 
-Design review used MotionSites’ public portfolio gallery and the freely available Shelf Hero prompt as inspiration for a browsable collection, distinctive project covers and restrained depth effects. No paid source code or third-party artwork was copied. Native pointer, page scrolling and keyboard controls are retained.
+[**Explore the portfolio**](https://arham-bi.vercel.app/) · [**Read the CV**](assets/Shaik_Arham_Saquib.pdf) · [**Email me**](mailto:sarhamsaquib@gmail.com)
 
-The five project records retain their evidence and limits. OpsResolve appears first and Explainable Energy second in All work. Category filters expose application support, research and analytics/reporting. Direct demo, paper and source links sit beside each case study. The page uses one fixed reading order, with no persona gate, hidden project rail or floating bottom navigation.
+<sub>Built to be explored. Grounded in evidence. Clear about limitations.</sub>
 
-Run `node scripts/build.mjs` for the static production build. It runs the checks and copies only the web files and retained assets into `dist/`. Unused footage, source scripts, uploads and local secrets are excluded. `vercel.json` configures the build, static output, content security policy and response headers.
-
-Deployment target: Vercel production, from this repository. GitHub Pages remains a fallback. Browser verification and deployment status must be checked after release; a passing build alone does not prove the site is live or certify accessibility.
-
-
-## Live Vercel release
-
-Production: https://arham-portfolio-topaz.vercel.app/ . Project: arham-portfolio, owned by the user’s Vercel workspace. The release was uploaded through the authorized Vercel connection from reviewed source. Vercel runs the checked static build. Automatic GitHub deployments are not connected: Vercel requires a separate GitHub Login Connection before Git linking can be enabled.
-
-Verified: public HTTP 200, local JavaScript/portrait/paper delivery, custom HTTP 404, response security headers, rendered project collection, filters and case-study dialogs. Vercel’s initial runtime error scan returned no errors. No external log drains are configured. This does not substitute for a screen-reader audit or physical-device testing.
-
-
-## Interactive Dublin exhibit
-
-The foreground city uses original 3D coordinates projected into a native canvas. Drag/keyboard orbit, three camera presets, zoom and reset work without third-party runtime libraries. It is a stylised composition rather than a geographical model. Rendering pauses when off-screen or when the tab is hidden. Reduced motion and the Motion control use single-frame updates. The project shelf uses original CSS 3D covers based on the user's own project images, with native buttons, arrows and keyboard selection.
-
-Campus photo: The John and Aileen O`Reilly Library, by SSCOhA, 26 November 2016. Source https://commons.wikimedia.org/wiki/File:The_John_and_Aileen_O%60Reilly_Library.jpg . CC BY-SA 4.0: https://creativecommons.org/licenses/by-sa/4.0/ . The resized WebP and displayed crop remain under that licence; attribution appears beside the image.
-
-
-## Rotating signal edition
-
-The city model and its script were removed at Arham’s request. The foreground graphic now uses a two-dimensional rotating typographic ring, with Investigate / Explain / Deliver controls linked to the corresponding portfolio chapters. Motion off, reduced motion, hover and focus pause the rotation. The DCU section uses Arham’s supplied personal campus photograph, without visual modification.
-
-Primary address: https://arham-bi.vercel.app/ . The previous Vercel address remains attached to the same project for existing links.
-
-## Character carousel edition
-The hero side panel is React + TypeScript, built with Vite and Tailwind utilities. Lucide supplies the arrow icons. Run `npm ci` then `npm run build`. The checked-in `carousel-build` supports the existing static publish pipeline. Four optimized WebP assets preserve the supplied Figma reference characters. Original image URLs remain in `src/main.tsx`; imagery is decorative, not a representation of employment or research. No license ownership is claimed for the supplied artwork.
-Manual checks: next/previous wrapping, rapid-click lock, keyboard arrows, reduced motion, local image delivery and DCU image preservation.
-
-## Personal edition
-- Replaced the third-party reference figurines with one original illustrated avatar based on Arham's supplied face photograph. All four story positions use this consistent personal character.
-- Added the existing real suit photograph behind the hero copy, with theme-aware contrast overlays.
-- Added labelled, required contact fields with native email validation, limits, a topic selector, email draft preparation and copy fallback. The static site does not store form content or claim delivery. No mail service credentials are configured.
-- Preserved the supplied DCU campus photograph, factual project descriptions and short production address.
-- Mobile stacking, keyboard controls, reduced motion, local optimized artwork and accessible form status remain supported.
-
-Avatar generated with the built-in image-generation tool. Prompt: Create a polished stylized 3D figurine of this exact adult man for his professional data analytics portfolio. Preserve his recognizable face, warm brown skin, thick wavy black hair, dark eyes and neatly trimmed beard and moustache. Full body standing, front three-quarter view, friendly confident subtle smile. Tastefully oversized head in premium collectible character style, adult proportions, navy business suit, white open-collar shirt, clean dark shoes, holding a closed slim laptop at his side. No glasses, no hat, no words, no logos, no background, true transparent alpha. Entire figure fully inside canvas with generous padding, studio lighting. This is an illustrated avatar based on the supplied real person, not photorealistic.
-
-Source and optimized asset: `src/main.tsx`, `assets/arham-avatar.webp`. Only the derived avatar is published. The private selfie reference is not included in the repository.
-
-## Cinematic chapter edition
-Mainframe reference adapted to Arham's personal portfolio. Four full-screen chapters reposition the original avatar, change the palette and text, and support touch swipes plus previous/next controls. The supplied remote video supplies a subdued, blurred ambient layer with mouse-driven seek queuing. It never autoplays. Typewriter and entrance effects respect reduced motion. The portfolio's navigation and factual sections are retained.
-
-Contact now submits JSON over HTTPS to FormSubmit from the page. Required fields, native email validation, a honeypot, duplicate-submit protection, a timeout and retry-preserving error feedback are included. Delivery requires the recipient to activate the FormSubmit form. Submission acceptance is not proof of inbox delivery. Privacy text identifies FormSubmit. No email app is launched.
-
-The supplied 4-second reference clip is mirrored locally at `assets/hero-motion.mp4` to avoid third-party playback failures. Original supplied source: https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260826_041744_63efcd78-bf7d-4039-99e2-2461e8a61903.mp4 . It remains a blurred decorative layer, not a representation of Arham.
-
-## Four-pose character set
-The hero now uses four separately generated illustrations of the same original character based on Arham: welcoming with an open hand, working on a laptop, explaining with a notebook and raised finger, and waving. Styling follows the supplied soft textured animation reference. A lighting-only revision adds subtle studio fill to the face and hands, retaining the natural warm brown skin tone. Each chapter preloads and crossfades its own pose.
-Generated with the built-in image-generation tool from the supplied identity and style references. Final project assets: assets/arham-welcome.webp, assets/arham-build.webp, assets/arham-explain.webp, assets/arham-wave.webp. Prompt direction: consistent face, wavy black hair, beard, navy felt blazer and ivory shirt; distinct chapter gestures; transparent backgrounds; slightly brighter facial midtones and softer shadows, without changing identity.
-
-## Luminous motion edition
-Replaced muted hero tones with pearl blue, mint, violet and warm ivory. Left and right edge arrows, keyboard arrows, touch swipes and chapter dots navigate four original poses. The active character gently floats and rotates; these are illustrated 2D assets with depth styling, not a fabricated 360-degree model. Pearl section surfaces, revised contrast and restrained scroll-linked research/award transitions extend the design down the page. Default theme is light unless the visitor explicitly saved dark mode. Motion off and reduced-motion preferences disable optional effects; content stays readable without animation. No career claims or results were added.
+</div>
