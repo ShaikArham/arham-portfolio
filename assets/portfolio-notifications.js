@@ -16,7 +16,7 @@
     flushing=true;
     clearTimeout(quietTimer);
     const batch=activity.splice(0,30);
-    const summary=batch.map((a,i)=>String(i+1)+'. '+a.time+' '+a.event+' '+a.detail+' (section: '+a.section+')').join('\\n').slice(0,1700);
+    const summary=batch.map((a,i)=>String(i+1)+'. '+a.time+' '+a.event+' '+a.detail+' (section: '+a.section+')').join(' | ').slice(0,1700);
     try{
       fetch(endpoint,{method:'POST',mode:'cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({event:'session_summary',detail:summary,section:clean(section()),session}),keepalive:true})
         .catch(()=>{}).finally(()=>{flushing=false;if(activity.length)schedule();});
