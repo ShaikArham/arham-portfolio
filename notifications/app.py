@@ -10,7 +10,7 @@ EMAIL = os.getenv("NOTIFY_TO", "")
 API_KEY = os.getenv("RESEND_API_KEY", "")
 FROM = os.getenv("RESEND_FROM", "Portfolio Notifications <onboarding@resend.dev>")
 ALLOWED = set(filter(None, os.getenv("ALLOWED_ORIGINS", "").split(",")))
-EVENTS = {"page_view", "section_view", "project_open", "external_project_click", "cv_view", "recognition_open", "certificate_view", "video_open", "video_chapter", "contact_click", "contact_form_submit", "linkedin_click"}
+EVENTS = {"session_summary", "page_view", "section_view", "project_open", "external_project_click", "cv_view", "recognition_open", "certificate_view", "video_open", "video_chapter", "contact_click", "contact_form_submit", "linkedin_click"}
 hits = defaultdict(deque)
 geo_cache = {}
 lock = threading.Lock()
@@ -82,7 +82,11 @@ def event():
     section = data.get("section", "")
     if not isinstance(session, str) or not re.fullmatch(r"[a-f0-9]{12}", session):
         return jsonify(error="invalid session"), 400
-    if not isinstance(detail, str) or not SAFE.fullmatch(detail):
+    if event_name == "session_summary" and isinstance(detail, str):
+        detail = detail[:1800]
+        if not re.fullmatch(r"[a-zA-Z0-9 _.,:/#()&+\\-\\n]{0,1800}", detail):
+            return jsonify(error="invalid summary"), 400
+    elif not isinstance(detail, str) or not SAFE.fullmatch(detail):
         return jsonify(error="invalid detail"), 400
     if not isinstance(section, str) or not SAFE.fullmatch(section):
         return jsonify(error="invalid section"), 400
@@ -103,7 +107,7 @@ def event():
     lines = [
         "Portfolio activity (client-reported)",
         "Action: " + event_name.replace("_", " ").title(),
-        "Detail: " + (detail or "Not specified"),
+        "Activity timeline:\\n" + (detail or "Not specified") if event_name == "session_summary" else "Detail: " + (detail or "Not specified"),
         "Section: " + (section or "Not specified"),
         "Session: " + session,
         "Origin: " + origin,
@@ -119,7 +123,7 @@ def event():
     ]
     payload = {
         "from": FROM, "to": [EMAIL],
-        "subject": "PORTFOLIO | " + event_name.replace("_", " ").title() + (" | " + detail[:40] if detail else ""),
+        "subject": "PORTFOLIO | Visitor activity summary" if event_name == "session_summary" else "PORTFOLIO | " + event_name.replace("_", " ").title() + (" | " + detail[:40] if detail else ""),
         "text": "\n".join(lines)
     }
     try:
