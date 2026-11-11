@@ -1,0 +1,13 @@
+name: Portfolio notification smoke test
+on:
+  workflow_dispatch:
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Health endpoint
+        run: |
+          curl --fail --show-error --retry 3 --retry-delay 10 https://arham-portfolio-notifications.onrender.com/health
+      - name: Send one consolidated test event
+        run: |
+          curl --fail --show-error --retry 2 --retry-delay 5 -X POST 'https://arham-portfolio-notifications.onrender.com/event' -H 'Origin: https://shaikarham.github.io' -H 'Content-Type: application/json' --data '{"event":"session_summary","session":"123456789abc","section":"contact","detail":"1. 21:40:00 page_view portfolio (section: top) | 2. 21:40:12 cv_view CV PDF opened (section: contact)"}'
