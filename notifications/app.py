@@ -1,17 +1,19 @@
-import os, time, threading
+import os, time, threading, re
 from collections import defaultdict, deque
+from datetime import datetime, timezone
 from flask import Flask, request, jsonify
 import requests
 
 app = Flask(__name__)
-app.config["MAX_CONTENT_LENGTH"] = 2048
+app.config["MAX_CONTENT_LENGTH"] = 4096
 EMAIL = os.getenv("NOTIFY_TO", "")
 API_KEY = os.getenv("RESEND_API_KEY", "")
 FROM = os.getenv("RESEND_FROM", "Portfolio Notifications <onboarding@resend.dev>")
 ALLOWED = set(filter(None, os.getenv("ALLOWED_ORIGINS", "").split(",")))
-EVENTS = {"page_view", "project_open", "cv_view", "cv_download", "recognition_open", "video_play"}
+EVENTS = {"page_view", "section_view", "project_open", "external_project_click", "cv_view", "recognition_open", "certificate_view", "video_open", "video_chapter", "contact_click", "contact_form_submit", "linkedin_click"}
 hits = defaultdict(deque)
 lock = threading.Lock()
+SAFE = re.compile(r"^[a-zA-Z0-9 _.,:/#()&+\-]{0,90}$")
 
 @app.after_request
 def cors(response):
@@ -39,23 +41,43 @@ def event():
     if not isinstance(data, dict) or data.get("event") not in EVENTS:
         return jsonify(error="invalid event"), 400
     event_name = data["event"]
-    # Privacy: no visitor IP, cookies, name, email, full URL, or fingerprint is stored or emailed.
-    # A modest per-IP limit is used transiently only to prevent notification flooding.
-    ip = request.headers.get("CF-Connecting-IP") or request.remote_addr or "unknown"
+    session = data.get("session", "")
+    detail = data.get("detail", "")
+    section = data.get("section", "")
+    if not isinstance(session, str) or not re.fullmatch(r"[a-f0-9]{12}", session):
+        return jsonify(error="invalid session"), 400
+    if not isinstance(detail, str) or not SAFE.fullmatch(detail):
+        return jsonify(error="invalid detail"), 400
+    if not isinstance(section, str) or not SAFE.fullmatch(section):
+        return jsonify(error="invalid section"), 400
+    # IP used in memory for rate limiting only, never stored or sent by email.
+    ip = request.remote_addr or "unknown"
     now = time.monotonic()
     with lock:
         q = hits[ip]
         while q and now - q[0] > 3600:
             q.popleft()
-        if len(q) >= 20:
+        if len(q) >= 100:
             return jsonify(error="rate limited"), 429
         q.append(now)
     if not EMAIL or not API_KEY:
         return jsonify(error="email not configured"), 503
+    lines = [
+        "Portfolio activity (client-reported)",
+        "Action: " + event_name.replace("_", " ").title(),
+        "Detail: " + (detail or "Not specified"),
+        "Section: " + (section or "Not specified"),
+        "Session: " + session,
+        "Origin: " + origin,
+        "Time (UTC): " + datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC"),
+        "",
+        "Session ID is temporary and anonymous; it groups activity from one open browser tab.",
+        "Events are not proof of unique visitors, attention, or successful PDF reading."
+    ]
     payload = {
         "from": FROM, "to": [EMAIL],
-        "subject": "PORTFOLIO | " + event_name.replace("_", " ").title(),
-        "text": "Portfolio event: " + event_name + "\nOrigin: " + origin + "\nTime (UTC): " + time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime()) + "\nClient-reported event; not proof of a unique human visitor."
+        "subject": "PORTFOLIO | " + event_name.replace("_", " ").title() + (" | " + detail[:40] if detail else ""),
+        "text": "\n".join(lines)
     }
     try:
         r = requests.post("https://api.resend.com/emails", headers={"Authorization": "Bearer " + API_KEY}, json=payload, timeout=8)
